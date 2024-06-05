@@ -1,0 +1,41 @@
+:stem:
+
+= Practice 3-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Give pseudocode to reconstruct an LCS from the completed stem:[c] table and the
+original sequences stem:[X = <<x_1, x_2, ..., x_m>>] and
+stem:[Y = <<y_1, y_2, ..., y_n>>] in stem:[O(m + n)] time, without using the
+stem:[b] table.
+
+
+== Answers
+
+=== Answer 1
+
+We can look at the LCS-LENGTH conditionals and change the PRINT-LCS to check if
+stem:[X[i\] = Y[j\]] first. If they are equal, we know that the character is in the
+LCS and we can print it. If they are not equal, we can check if the value in
+the table to the left is greater than or equal to the value above. If it is,
+we can move up in the table. If it is not, we can move left in the table.
+
+[pseudocode]
+----
+PRINT-LCS(c, X, Y, i, j) {
+  if(i == 0 or j == 0)
+    return;
+
+  if(X[i] == Y[j]) {
+    PRINT-LCS(c, X, Y, i-1, j-1);
+    print X[i];
+  } else if(c[i-1][j] >= c[i][j-1]) {
+    PRINT-LCS(c, X, Y, i-1, j);
+  } else {
+    PRINT-LCS(c, X, Y, i, j-1);
+  }
+}
+----

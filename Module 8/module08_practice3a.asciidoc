@@ -1,0 +1,19 @@
+:stem:
+
+= Practice 8-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Explain how to coarsen the base case of stem:[text(P-MERGE-SORT)].
+
+
+== Answers
+
+=== Answer 1
+stem:["P-MERGE-SORT"] can be found on page 775 of the book. We would simply
+change the condition on line 1 to check for a larger limit than 1 element.
+Instead of returning on line 2, we would call a serial sorting algorithm on the
+range specified.

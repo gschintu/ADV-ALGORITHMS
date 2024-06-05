@@ -1,0 +1,56 @@
+:stem:
+:imagesdir: images
+
+* Graphs are a collection of vertices (or nodes) and edges. The edges describe
+the adjacency of the vertices. Edges can be directed or undirected. If A is
+adjacent to B with undirected edges, then B is also adjacent to A. This is not
+necessarily true with directed edges.
+
+* We can describe a graph with several methods:
+  ** Graphically
+  ** Adjacency-list
+  ** Adjacency-matrix
+
+* image:01.png[]
+
+* Breadth First Search (BFS) is an algorithm to discover every vertex that is
+reachable from some source vertex. It can easily also compute the distance to
+each of those vertices.
+
+* image:02.png[]
+
+* Depth First Search (DFS) is similar but goes as deep as possible first then
+checks alternate paths. In this example, we pick a vertex as a starting point
+to run DFS. If any vertices are still not visited after it returns, we simply
+pick another unvisited vertex on which to call DFS. During this process, the
+discovery time and finish time are recorded which can tell us some useful
+information about the graph.
+
+* image:03.png[]
+
+* Parenthesis theorem: If we print open parenthesis and vertex name when it's
+discovered followed by the vertex name and close parenthesis when it's finished,
+we would end up with a printed expression that is well formed (proper
+parenthesis pairing).
+
+* Using our last example, we would have `(u (v (y (x x) y) v) u) (w (z z) w)`.
+
+* Four types of edges in the depth-first forest produced by the DFS
+  ** Tree edge: Edge through which the sink was first discovered
+  ** Back edge: Edge where the sink is a ancestor of the source
+  ** Forward edge: Edge is a nontree edge connecting the source to a
+  proper descendant 
+  ** Cross edge: All other edges
+
+* Note that the depth-first forest is not unique. Choosing a different starting
+point would change the classification of edges and the timestamps.
+
+* We can use depth-first search to perform a topological sort of a directed
+acyclic graph ("dag"). In other words, a graph with no cycles. This is an
+ordering of all the vertices such that if there is an edge from u to v then
+u comes before v in the ordering.
+
+* This is often used for prerequisites of items. For instance, we could
+create a graph where all the vertices are courses that UTK offers. There's
+an edge from course A to course B if A is a prerequisite for course B.
+Doing a topological sort on this would give us a valid order to take classes.

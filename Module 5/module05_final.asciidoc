@@ -1,0 +1,77 @@
+:stem:
+
+= Problem Set 5
+Author: Giuseppe Schintu
+:toc:
+
+== Problems
+
+=== Setup
+For all of the following,
+consider the problem of making change of stem:[n] cents using the smallest
+number of coins. Assume that each coin's value is an integer.
+
+=== Problem 1
+Describe a greedy algorithm to make change consisting of quarters, dimes,
+nickels, and pennies. Prove that your algorithm yields an optimal solution.
+
+=== Problem 2
+Suppose that the available coins are in denominations that are powers of
+stem:[c]: the denominations are stem:[c^0, c^1, ..., c^k] for some integers
+stem:[c > 1] and stem:[k >= 1]. Show that the greedy algorithm always yields
+an optimal solution.
+
+=== Problem 3
+Give a set of coin denominations for which the greedy algorithm does not yield
+an optimal solution. Your set should include a penny so that there is a solution
+for every value of stem:[n].
+
+=== Problem 4
+Give an stem:[O(nk)]-time algorithm that makes change for any set of stem:[k]
+different coin denominations using the smallest number of coins, assuming that
+one of the coins is a penny.
+
+
+== Answers
+
+=== Answer 1
+To make change of stem:[n] cents using the smallest number of coins, we can use a greedy algorithm. We will consider the following coins: quarters (25 cents), dimes (10 cents), nickels (5 cents), and pennies (1 cent). The greedy algorithm is as follows:
+
+. Start with stem:[n] cents.
+. Take as many quarters as possible without exceeding stem:[n]. Subtract the value of the quarters from stem:[n].
+. Take as many dimes as possible without exceeding stem:[n]. Subtract the value of the dimes from stem:[n].
+. Take as many nickels as possible without exceeding stem:[n]. Subtract the value of the nickels from stem:[n].
+. Take the remaining pennies. At this point the remaining amount of stem:[n] cents should be less than all other coins.
+Since at each step we take the largest coin possible, yet not exceeding stem:[n], and since using larger coins is always better than using smaller coins, this algorithm will yield an optimal solution.
+
+=== Answer 2
+For simplicity, let's consider the case where stem:[c=2] and stem:[k>=1] so that our denominations are power of 2. We will have coin denominations of stem:[1, 2, 4,8,16, c^k].
+If we apply the previous greedy algorithm to this set of denominations, we will see that it will always yield an optimal solution:
+
+For instance, if we want to make change for stem:[30] cents using iterations of the previous greedy algorithm, we will have 4 iterations:
+
+Iter 1 - One stem:[2^4 = 16] cents, the greedy algorithm will choose one 16-cent coin.
+
+Iter 2 - One stem:[2^3 = 8] cents, the greedy algorithm will choose one 8-cent coin.
+
+Iter 3 - One stem:[2^2 = 4] cents, the greedy algorithm will choose one 4-cent coin.
+
+Iter 4 - One stem:[2^1 = 2] cents, the greedy algorithm will choose one 2-cent coin.
+
+
+This is because at each step, the greedy algorithm will always choose the largest coin that is less than or equal to the remaining amount of stem:[n]. Since the denominations are powers of 2, the greedy algorithm will always choose the largest coin possible at each step, which will result in the smallest number of coins used.
+
+
+=== Answer 3
+
+If we let the coin denominations be stem:[{1,3,4}], and the make change stem:[6] cents, the greedy algorithm would not yield an optimal solution. The greedy algorithm would choose the largest coin possible at each step, which would result in the collection of coins stem:[{4,1,1}] which is 3 coins. However, the optimal solution would be stem:[{3,3}] which is 2 coins. This is because the greedy algorithm would choose the 4-cent coin first, while the optimal solution would choose two 3-cent coins.
+
+Similarly, if we let coin denominations be stem:[{1,6,10}] and the make change stem:[12] cents, the greedy algorithm would choose the coins stem:[{10,1,1}] which is 3 coins. However, the optimal solution would be stem:[{6,6}] which is 2 coins. This is because the greedy algorithm would choose the 10-cent coin first, while the optimal solution would choose two 6-cent coins.
+
+=== Answer 4
+
+Suppose we have a set of stem:[k] different coin denominations stem:[{d_1, d_2, ..., d_k}]. We will let stem:[c(i)] represent the minimum number of coins needed to make change for stem:[i] cents. We cannot make change for a negative amount; therefore, we can let stem:[c(i) = \infty] for stem:[i < 0] and stem:[c(0) = 0] since no coins are needed for a zero change amount. Now, for stem:[i >= 1], we can define stem:[c(i)] as follows:
+
+stem:[c(i) = \min_{j=1}^{k} c(i - d_j) + 1]
+
+If we apply this equation recursively, stem:[c(n)] can be calculated in stem:[O(nk)] steps. This is because we need to calculate stem:[c(i)] for stem:[i = 1, 2, ..., n] and for each stem:[i], we need to consider stem:[k] different coin denominations. Therefore, the time complexity of this algorithm is stem:[O(nk)].

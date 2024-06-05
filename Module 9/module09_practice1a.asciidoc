@@ -1,0 +1,47 @@
+:stem:
+
+= Practice 9-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+
+==== Setup
+Sometimes, in a linear program, we need to convert constraints from one form to
+another.
+
+==== Part A
+Show how to convert an equality constraint into an equivalent set of
+inequalities. That is, given a constraint
+stem:[Sigma_{j=1}^{n} a_{ij}x_j = b_i], give a set of inequalities that will
+be satisfied if an only if stem:[Sigma_{j=1}^{n} a_{ij}x_j = b_i].
+
+==== Part B
+Show how to convert an inequality constraint
+stem:[Sigma_{j=1}^{n} a_{ij}x_j <= b_i] into an equality constraint and a
+nonnegativity constraint. You will need to introduce an additional variable
+stem:[s], and use the constraint that stem:[s >= 0].
+
+
+== Answers
+
+=== Answer 1A
+We would simply turn the equality constraint into two inequality constraints.
+One that is less than or equal and another that is greater than or equal.
+To meet both constraints, the original must be true.
+
+* stem:[Sigma_{j=1}^{n} a_{ij}x_j <= b_i]
+* stem:[Sigma_{j=1}^{n} a_{ij}x_j >= b_i]
+
+=== Answer 1B
+For this, we need to introduce a slack variable stem:[s]. We'll use this
+as our equality constraint. If we subtract the summation from both sides we
+get stem:[0 <= b_i - Sigma_{j=1}^{n} a_{ij}x_j].
+We can encapsulate this equation's equality portion by setting stem:[s] equal
+to the right hand side and then capture the less than portion with the
+nonnegativity constraint as follows.
+
+* stem:[s = b_i - Sigma_{j=1}^{n} a_{ij}x_j]
+* stem:[s >= 0]

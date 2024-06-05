@@ -1,0 +1,20 @@
+:stem:
+
+= Practice 6-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Professor Gaedel has written a program that he clains implements Dijksta's
+algorithm. The program produces stem:[v.d] and stem:[v.pi] for each vertex
+stem:[v in V]. Give an stem:[O(V + E)]-time algorithm to check the output of
+the professor's program. It should determine whether the stem:[d] and stem:[pi]
+attributes match those of some shortest-paths tree. You may assume that all
+edge weights are nonnegative.
+
+
+== Answers
+
+=== Answer 1

@@ -1,0 +1,48 @@
+:stem:
+
+= Practice 7-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Use the potential method to determine the amortized cost per operation for a
+sequence of stem:[n] operations on a data structure in which the stem:[i]th
+operation costs stem:[i] if stem:[i] is an exact power of 2, and 1 otherwise.
+
+
+== Answers
+
+=== Answer 1
+Let stem:[c_i] be the cost of the stem:[i]-th operation.
+
+stem:[c_i = {(i, "if " i " is a power of 2"), (1, "otherwise"):}]
+
+Let the potential function be defined as follows:
+
+stem:[Phi(D_i) = {(0, i = 0), (2i - 2^{|__ log i __| + 1} + 1, i > 0):}]
+
+This potential is always nonnegative so we have
+
+stem:[forall i, Phi(D_i) >= 0 = Phi(D_0)].
+
+For stem:[i] which is a power of 2, the potential difference is
+
+stem:[Phi(D_i) - Phi(D_{i-1}) = (2i - 2i + 1) - (2(i-1) - i + 1) = 2 - i].
+
+Thus, the amortized cost of the stem:[i]-th operation
+when i is a power of 2 is
+
+stem:[hat c_i = c_i + Phi(D_i) - Phi(D_{i-1}) = i + 2 - i = 2]
+
+For stem:[i] which is not a power of 2, the potential difference is
+
+stem:[Phi(D_i) - Phi(D_{i-1}) = (2i - i + 1) - (2(i-1) - i + 1) = 2].
+
+Thus, the amortized cost of the stem:[i]-th operation
+when i is not a power of 2 is
+
+stem:[hat c_i = c_i + Phi(D_i) - Phi(D_{i-1}) = 1 + 2 = 3]
+
+Thus, the amortized cost of each operations is stem:[O(1)].

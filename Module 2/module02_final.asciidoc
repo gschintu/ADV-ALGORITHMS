@@ -1,0 +1,228 @@
+:stem:
+
+= Problem Set 2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+What is the largest stem:[k] such that if you can multiple 3 x 3
+matrices using stem:[k] multiplications (not assuming commutativity of
+multiplication), then you can multiple stem:[n] x stem:[n] matrices in time
+stem:[o(n^{log 7})]? What would the running time of the algorithm be?
+Show your work.
+
+==== Hints
+Make use of the master method to reason about this problem.
+
+
+=== Problem 2
+Give asymptotically tight upper and lower bounds for stem:[T(n)] in each of the
+following recurrences. Justify your answers.
+
+.. stem:[T(n) = 4T(n//3) + root(3)(n)]
+.. stem:[T(n) = 4T(n//3) + n root(3)(n)]
+.. stem:[T(n) = 4T(n//3) + (n^{log_3 4}) log_3 n]
+.. stem:[T(n) = T(sqrt(n)) + 1]
+  *** Hint: Consider a change of variable, as discussed in the book on Page 120
+  Problem 4-3
+.. stem:[T(n) = T(n//2) + T(n//4) + T(n//8) + n]
+.. stem:[T(n) = 3T(n//2) + n log n]
+.. stem:[T(n) = 4T(n//2) + n^2 sqrt(n)]
+.. stem:[T(n) = 2T(n//2) + n^3]
+
+
+== Answers
+
+=== Answer 1
+
+The master theorem states that a recurrence relation of the form:
+
+stem:[T(n) = aT(n/b) + f(n)]
+
+where all quantities are positive and stem:[a > 0, b > 1] are constants, has 3 cases.
+
+In the case of multiplying stem:[n * n] matrices, Strassen's algorithm divides the problem into subproblems of size stem:[n/2]. However, in this case we have a subproblem of stem:[n/3] and in each recursive step it needs to perform stem:[k] matrix multiplications. Additionally, we have stem:[\Theta(n^2)] as this represents the non-recursive term of time complexity when multiplying stem:[n * n] matrices. Therefore, we can express the Master Theorem recurrence relation as:
+
+stem:[T(n) = kT(n/3) + \Theta(n^2)]
+
+Here, stem:[a = k, b = 3, f(n) = n^2]. We can compare the growth of stem:[f(n)] to stem:[n^{log_b a}]. Thus, we have:
+Assuming stem:[n = 2] and stem:[k = 3], we can see that stem:[n^{log_b a} = n^{log_3 3} = n] and stem:[f(n) = n^2].
+Thus, stem:[f(n)] grows faster than stem:[n^{log_b a}].
+
+Therefore, we fall into the first case of the master theorem. And the solution to the recurrence is:
+stem:[T(n) = \Theta(n^{log_3 k})]
+
+Now, we need to find the largest stem:[k] such that stem:[T(n) = \Theta(n^{log_3 k})] is smaller than stem:[o(n^{log 7})]. We can solve for stem:[k] by setting stem:[n^{log_3 k} < n^{log 7}] and solving for stem:[k]:
+
+Simplifying each side of the inequality, removes common stem:[n]:
+
+stem:[log_3 k < log 7] (we will assume stem:[log 7] is natural log of 7)
+
+and then by logarithmic transformation property stem:[a = log_b c], then stem:[c = b^a], we have:
+
+stem:[k < 3^{log 7}].
+
+Resolving stem:[k], stem:[k < 3^{log 7} \approx 21.85].
+
+So, the largest stem:[k] such that you can multiply 3 x 3 matrices using stem:[k] multiplications and then multiply stem:[n] x stem:[n] matrices in time stem:[o(n^{log 7})] is stem:[k = 21].
+The running time of the algorithm would be stem:[O(n^{log_3 21}) = O(n^{2.77})]
+
+=== Answer 2
+[.red]#A.# -
+stem:[T(n) = 4T(n//3) + root(3)(n)]
+
+We can apply the Master Theorem.
+Given:
+
+* stem:[a = 4], the number of recursive calls.
+* stem:[b = 3], the factor by which the problem size is reduced.
+* stem:[f(n) = root(3)n], representing the additional work done outside the recursive calls.
+
+* Evaluating latexmath:[\log_b a = \log_3 4], we observe that latexmath:[f(n)] grows slower than latexmath:[n^{\log_3 4}]. 
+This places our recurrence in the first case of the Master Theorem, where latexmath:[f(n)] is 
+asymptotically smaller than latexmath:[n^{\log_b a}].
+
+* Therefore, according to the Master Theorem, the solution to the recurrence is:
+
+[latexmath]
+++++
+T(n) = \Theta(n^{\log_3 4})
+++++
+
+* This means the asymptotically tight upper and lower bounds for the recurrence 
+stem:[T(n) = 4T\left(\frac{n}{3}\right) + \root(3)n] are both latexmath:[\Theta(n^{\log_3 4})].
+
+
+
+[.red]#B.# - 
+stem:[T(n) = 4T(n//3) + n root(3)(n)]
+
+In applying the Master Theorem, we identify:
+
+* stem:[a = 4], the number of recursive calls.
+* stem:[b = 3], the factor by which the problem size is reduced.
+* stem:[f(n) = n root(3)(n)], representing the additional work done outside the recursive calls.
+
+Applying the Master Theorem and comparing the growth of the recursive portion stem:[f(n)] to stem:[n^{log_ba}].
+
+Since stem:[f(n) = n root(3)(n)] (or stem:[n^{4/3}]) grows faster than stem:[n^{log_3(4)}] (approximately stem:[n^{1.26}]), we are in the third case of the Master Theorem. This case applies when stem:[f(n)] grows polynomially faster than stem:[n^{log_b a}].
+
+Assuming the regularity condition holds, the solution to the recurrence is:
+
+
+This means the asymptotically tight upper and lower bounds for the recurrence stem:[T(n) = 4T(n//3) + n root(3)(n)] are both stem:[Θ(n root(3)(n))], indicating that the non-recursive work term dominates the overall time complexity of the algorithm.
+
+[.red]#C.# - 
+stem:[T(n) = 4T(n/3) + n^{log_3 4} log_3 n]
+
+[latexmath]
+++++
+a = 4, \: b = 3 \\
+\text{We have } n^{log_3 4} = n^{1.2} \text{ vs } \: n^{1.2} log_3 n \\
+\text{Looks like the driving function grows faster than the watershed function but not polynomically, only by a factor of } \Theta(log_3 n) \text{ so we can use case 2, where } k = 1 \\
+\text{Therefore } \\
+\text{ Now, we need to show that there is a constant } k \ge 0 \text{ such that } f(n) = \Theta(n^{log_3 4} log^k n) \text{ , then } T(n) = \Theta(n^{log_3 4} log^{k+1} n)
+\\
+\text{ The solution to the recurrence is } \\
+T(n) = \Theta(n^{log_3 4} log^2 n)
+++++
+
+
+
+[.red]#D.# - 
+stem:[T(n) = T(sqrt(n)) + 1]
+
+This recurrence does not fit the form required by the Master Theorem. However, we can apply a change of variables. Let's define stem:[m = log n], which implies stem:[n = 2^m]. But, because we introduced a new variable we also define and resolve a new sub function stem:[S(m) = T(2^m)].
+
+We can then solve this new recurrence:
+
+stem:[T(n) = T(n^{1/2}) + 1]
+
+stem:[T(2^m) = T(2^{m/2}) + 1]
+
+stem:[S(m) = S(m/2) + 1]
+
+Now this is in the form of a Master Theorem recurrence.
+So, stem:[a = 1, b = 2, f(m) = 1] so stem:[m^{log_b a} = m^0 = 1 = \Theta(1)]. Because stem:[f(m) = \Theta(1)], the growth of the driving function is constant, so it can fall under case 2 of the Master Theorem.Although, in this particular case we know that the growth is constant, so we can skip the regularity condition.
+
+So, now, we can change back to the original variable stem:[T(n)] and get:
+
+stem:[T(n) = T(2^m) = S(m) = \Theta(log m) = \Theta(log log n)]
+
+[.red]#E.# - 
+stem:[T(n) = T(n/2) + T(n/4) + T(n/8) + n]
+
+Given the recurrence relation:
+\[T(n) = T\left(\frac{n}{2}\right) + T\left(\frac{n}{4}\right) + T\left(\frac{n}{8}\right) + n\]
+
+We attempt to prove that \(T(n) = \Theta(n)\) by induction. Assume for all \(i < n\) that \(c_1i \leq T(i) \leq c_2i\). Then, for the induction step, we have:
+
+\[T(n) = T\left(\frac{n}{2}\right) + T\left(\frac{n}{4}\right) + T\left(\frac{n}{8}\right) + n\]
+
+Substituting the induction hypothesis into the recurrence gives:
+
+\[c_1\left(\frac{n}{2}\right) + c_1\left(\frac{n}{4}\right) + c_1\left(\frac{n}{8}\right) + n \leq T(n) \leq c_2\left(\frac{n}{2}\right) + c_2\left(\frac{n}{4}\right) + c_2\left(\frac{n}{8}\right) + n\]
+
+Simplifying both sides:
+
+\[c_1n\left(\frac{1}{2} + \frac{1}{4} + \frac{1}{8}\right) + n \leq T(n) \leq c_2n\left(\frac{1}{2} + \frac{1}{4} + \frac{1}{8}\right) + n\]
+
+\[c_1n\left(\frac{7}{8}\right) + n \leq T(n) \leq c_2n\left(\frac{7}{8}\right) + n\]
+
+Given that the coefficients of \(n\) on both sides are constants, and by choosing appropriate values for \(c_1\) and \(c_2\) that satisfy the inequalities for all \(n\), we can demonstrate that \(T(n) = \Theta(n)\).
+
+
+[.red]#F.# - 
+stem:[T(n) = 3T(n//2) + n log n]
+
+We can use the Master Theorem to solve this recurrence. Given:
+
+[latexmath]
+++++
+a = 3, \: b = 2 \\
+\text{We have } n^{log_2 3} = n \text{ vs } \: n log n \\
+f(n) \approx n^{log_2 3} \text{ as } n log n \approx n^{1.58} \\
+\text{We can see that the watershed function is not strictly smaller than the driving function.} \\
+\text{However, since } log n \text{ grows slower than any polynomial, } n log n \text{ grows slower than } n^{1.585} \text{ Therefore, we can say that } f(n) = O(n^{log_2 3 - \epsilon}) \text{ for some } \epsilon \gt 0  \\
+\text{This means that we can use case 1 of the Master Theorem.} \\
+\text{According to the first case. If } f(n) = O(n^{log_b a - \epsilon}) \text{ then, } T(n) = \Theta(n^{log_b a}) \\
+\text{Therefore, the solution to the recurrence is } \\
+T(n) = \Theta(n^{log_2 3})
+++++
+
+[.red]#G.# - 
+stem:[T(n) = 4T(n//2) + n^2 sqrt(n)]
+
+We can use the Master Theorem to solve this recurrence. Given:
+
+[latexmath]
+++++
+a = 4, \: b = 2 \\
+\text{For the watershed comparison against the driving function, we have } n^{log_2 4} = n^2 \text{ vs } \: n^2 \sqrt{n} = n^{2.5} \\
+\text{Looks like the driving function grows faster than the watershed function by a factor of } n^{0.5} \text{ So we can use case 3, but we must prove the regularity condition first } \\
+4(n/2)^{2.5} \leq cn^{2.5} \text{ for some constant } c \lt 1 \text{ and all sufficiently large } n\\
+\text{We can resolve that } 4(n/2)^{2.5} = 0.707*n^{2.5} \leq cn^2 \text{ for } c \ge 1 \text{ and  } n \ge 2\\
+\text{Therefore, since } 0.707 < 1 \text{ the regularity condition holds.} \\
+T(n) = \Theta(n^2 \sqrt{n})
+
+++++
+
+
+[.red]#H.# - 
+stem:[T(n) = 2T(n//2) + n^3]
+
+We can use the Master Theorem to solve this recurrence. Given:
+
+[latexmath]
+++++
+a = 2, \: b = 2 \\
+\text{We have } n^{log_2 2} = n \text{ vs } \: n^3 \\
+\text{Looks like the driving function grows polynomially faster than the watershed function, so we can use case 3 } \\
+\text{However, we need to show that } f(n) = \Omega(n^{log_2 2+\epsilon}) \text{ where } \epsilon \gt 0 \text{ and that the regularity condition holds which is } 2(n/2)^3 \leq (cn^3) \text{for some constant } c \lt 1 \text{ and all sufficiently large } n\\
+\text{We can see that } 2(n/2)^3 = n^3 \leq cn^3 \text{ for } c \ge 1 \text{ and  } n \ge 2\\
+\text{Therefore, the regularity condition holds.} \\
+T(n) = \Theta(n^3)
+
+++++

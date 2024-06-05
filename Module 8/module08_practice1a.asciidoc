@@ -1,0 +1,37 @@
+:stem:
+
+= Practice 8-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Prove that a greedy scheduler achieves the following time bound
+stem:[T_P <= {T_1 - T_{oo}} / P + T_{oo}], which is
+slightly stronger than the bound proved in the reading of
+stem:[T_P <= T_1 / P + T_{oo}].
+
+
+== Answers
+
+=== Answer 1
+Suppose that there are stem:[x] incomplete steps in a run of a program. Since
+each of these steps causes at least one unit of work to be done, we have that
+there are at most stem:[T_1 - x] units of work done in the complete steps.
+Suppose by contradiction that the number of complete steps is strictly greater
+than stem:[|__ (T_1 - x) // P __|]. We would have the total amount of work done
+during the complete steps
+
+* stem:[P * (|__ (T_1 - x) // P __| + 1)]
+* stem:[= P |__ (T_1 - x) // P __| + P]
+* stem:[= (T_1 - x) - ((T_1 - x) mod P) + P]
+* stem:[> T_1 - x]
+
+This is a contradiction because there are only stem:[T_1 - x] units of work
+done during complete steps. Since stem:[T_oo] is a bound on the total number
+of both kinds of steps, it is a bound on the number of incomplete steps,
+stem:[x]. Thus,
+
+* stem:[T_P <= |__ (T_1 - x) // P __| + x]
+* stem:[<= |__ (T_1 - T_oo) // P __| + T_oo]

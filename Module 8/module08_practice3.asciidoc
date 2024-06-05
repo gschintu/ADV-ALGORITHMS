@@ -1,0 +1,16 @@
+:stem:
+
+= Practice 8-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Explain how to coarsen the base case of stem:[text(P-MERGE-SORT)].
+
+
+== Answers
+
+=== Answer 1
+The base case of stem:[text(P-MERGE-SORT)] is when the input array has only one element. In this case, the array is already sorted, so we don't need to do anything. We can coarsen the base case by using a simpler sorting algorithm like insertion sort when the size of the input array is small (e.g., less than 10 elements). This will reduce the overhead of the recursive calls and improve the overall performance of the algorithm.

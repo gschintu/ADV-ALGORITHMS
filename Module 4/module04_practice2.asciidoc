@@ -1,0 +1,17 @@
+:stem:
+
+= Practice 4-2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Show how to express the single-source shortest-paths problem as a product of
+matrices and a vector. Describe how evaluating this product corresponds to a
+Bellman-Ford-like algorithm.
+
+
+== Answers
+
+=== Answer 1

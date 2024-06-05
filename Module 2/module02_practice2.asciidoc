@@ -1,0 +1,41 @@
+:stem:
+
+= Practice 2-2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problem 1
+Use mathematical induction to show that when stem:[n >= 2] is an exact power of
+2, the solution of the recurrence
+
+[stem]
+++++
+T(n) = {(2, text(if ) n = 2), (2T(n/2) + n, text(if ) n > 2):}
+++++
+
+is stem:[T(n) = n log n].
+
+== Problem 1 Answer
+
+
+To prove by induction, we need to establish a base case and then an inductive step.
+
+=== Base Case
+For n = 2, T(2) = 2 which is equal to 2 log 2. So, the base case holds.
+
+=== Inductive Step
+Assume the statement is true for some k >= 2, i.e., T(k) = k log k.
+We need to prove that the statement is true for 2k, i.e., T(2k) = 2k log(2k).
+
+Given T(n) = 2T(n/2) + n, we substitute n with 2k:
+[stem]
+++++
+T(2k) = 2T(k) + 2k                                          \ 
+T(2k) = 2k log k + 2k , text((by the inductive hypothesis)) \
+T(2k) = 2k (log k + 1)                                      \
+T(2k) = 2k log(2k)                                          
+++++
+
+Hence, the statement is true for 2k when it is true for k.
+
+Therefore, by mathematical induction, T(n) = n log n for all n >= 2 where n is a power of 2.

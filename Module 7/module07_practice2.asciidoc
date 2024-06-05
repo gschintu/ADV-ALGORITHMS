@@ -1,0 +1,30 @@
+:stem:
+
+= Practice 7-2
+Author: Giuseppe Schintu
+:toc:
+
+== Problems
+
+=== Problem 1
+Use the accounting method to determine the amortized cost per operation for a
+sequence of stem:[n] operations on a data structure in which the stem:[i]th
+operation costs stem:[i] if stem:[i] is an exact power of 2, and 1 otherwise.
+
+
+== Answers
+
+=== Answer 1
+
+If we let stem:[c_i] be the cost of the stem:[i^{th}] operation, then we have 2 conditions:
+
+* stem:[c_i = i] if stem:[i] is a power of 2
+* stem:[c_i = 1] otherwise
+
+Since we have 2 operations and we want to ensure we don't run out of credit, we should charge each operation an amortized cost of stem:[3]. This way, we can ensure that we have enough credit to pay for the stem:[i^{th}] operation if stem:[i] is a power of 2. 
+
+When stem:[i] is a power of 2, we use stored credit top pay for the operation. When stem:[i] is not a power of 2, we use the stored credit to pay for the operation and store the remaining credit for future operations.
+
+However, if we begin with nonnegative credit post the stem:[2^i]-th operation. From this point to the stem:[2^{i+1}]-th operation, we encounter stem:[2^{i+1} - 2^i - 1] operations, each accruing 2 credits, yielding a total credit of stem:[2^{i+2} - 2^{i+1} - 2 = 2^{i+1} - 2]. At the stem:[2^{i+1}]-th operation, 3 credits are charged, but the available credit is stem:[2^{i+1} + 1], sufficient to cover the stem:[2^{i+1}] cost. Therefore, we maintain nonnegative credit throughout.
+
+Considering each operation incurs an amortized cost of stem:[3], which is stem:[O(1)], the total cost for stem:[n] operations rises to stem:[O(n)].

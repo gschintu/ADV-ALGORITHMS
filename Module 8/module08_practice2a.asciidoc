@@ -1,0 +1,68 @@
+:stem:
+
+= Practice 8-2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Give pseudocode for a parallel algorithm that multiplies two stem:[n xx n]
+matrices with work stem:[Theta(n^3)] but span only stem:[Theta(log n)]. Analyze
+your algorithm.
+
+
+== Answers
+
+=== Answer 1
+Let's start with `P-MATRIX-MULTIPLY` from the book page 771 reproduced here in
+plain text.
+
+----
+P-MATRIX-MULTIPLY(A, B, C, n)
+parallel for i = 1 to n:       // compute entries in each of n rows
+  parallel for j = 1 to n:     // compute n entries in row i
+    for k = 1 to n:
+      C[i][j] = C[i][j] + A[i][k] * B[k][j]    // add in another term of equation (4.1)
+----
+
+To achieve the span of stem:[Theta(log n)], we need to parallelize the inner
+most for loop. We can't do this with a simple parallel keyword on the loop
+due to race conditions. Instead we will write a parallel version of a dot
+product called `P-DOT-PRODUCT`.
+
+* Let `A` and `B` be two vectors.
+* Let `i` and `j` be the indices representing the range to calculate.
+
+We'll assume `n` is a power of 2 for simplicity. It
+can be modified to handle non-powers of two in a similar manner to the
+divide-and-conquer matrix multiplication. The initial call will be to
+`P-DOT-PRODUCT(A, B, 1, n)`.
+
+----
+P-DOT-PRODUCT(A, B, i, j)
+if i == j:
+  return A[i] * B[i]
+
+mid = floor((i + j) / 2)
+val1 = spawn P-DOT-PRODUCT(A, B, i, mid)
+val2 = P-DOT-PRODUCT(A, B, mid+1, j)
+sync
+return val1 + val2
+----
+
+This is similar to `P-MAT-VEC-RECURSIVE` from the book page 763 except our
+base case is stem:[Theta(1)] span now. This gives us a function that has a
+span of stem:[Theta(log n)].
+
+Plugging that into our `P-MATRIX-MULTIPLY`
+
+----
+P-MATRIX-MULTIPLY(A, B, C, n)
+parallel for i = 1 to n:       // compute entries in each of n rows
+  parallel for j = 1 to n:     // compute n entries in row i
+    C[i][j] = P-DOT-PRODUCT(A[i][], B[][j], 0, n)
+----
+
+Each line gives us stem:[Theta(log n)] span but since it is done in parallel
+we add the spans together for stem:[Theta(log n) + Theta(log n) + Theta(log n) = Theta(log n)].

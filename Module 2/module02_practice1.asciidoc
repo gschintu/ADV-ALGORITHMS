@@ -1,0 +1,88 @@
+:stem:
+
+= Practice 2-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problem 1
+You can also think of insertion sort as a recursive algorithm. In order to sort
+stem:[A[1:n\]], recursively sort the subarray stem:[A[1:n-1\]] and then insert
+stem:[A[n\]] into the sorted subarray stem:[A[1:n-1\]]. Write pseudocode for this
+recursive version of insertion sort. Give a recurrence for its worst-case running
+time.
+
+=== Notes
+Here is an example of writing pseudocode with asciidoc. Use "text" or other text
+tags that you can find in the asciidoc documentation to make sure text stays as
+text in a stem block. It also helps with forcing indention. Otherwise, asciidoc
+generally ignores whitespace.
+
+* stem:[text(MERGE-SORT)(A, p, r)]
+. stem:[text(if ) p >= r]
+. stem:[text(  return)]
+. stem:[q = |__ (p + r) // 2 __|]
+. stem:[text(MERGE-SORT)(A, p, q)]
+. stem:[text(MERGE-SORT)(A, q+1, r)]
+. stem:[text(MERGE)(A, p, q, r)]
+
+
+== Problem 1 Answer
+
+[source,plaintext]
+----
+FUNC-INSERTION-SORT(A, n)
+    if n <= 1
+        return
+    FUNC-INSERTION-SORT(A, n-1)
+    FUNC-INSERT(A, n)
+
+FUNC-INSERT(A, n)
+    value_at = A[n]
+    i = n-1
+    while i > 0 and A[i] > value_at
+        A[i+1] = A[i]
+        i = i - 1
+    A[i+1] = value_at
+----
+
+
+
+### Recurrence Relation
+
+- **Base Case**: When \(n = 1\), the array is also sorted, so the running time is \(T(1) = c\), where \(c\) is a constant representing the time to check the base case.
+  
+- **Recursive Case**: To sort an array of size \(n\), the algorithm first recursively sorts the first \(n-1\) elements, which takes \(T(n-1)\) time. Then, it inserts the \(n\)th element into the sorted array of size \(n-1\). In the worst case, inserting the \(n\)th element could require comparing it with all \(n-1\) elements and possibly shifting each one. This insertion step, therefore, takes time proportional to \(n-1\).
+
+Combining these steps, the recurrence relation for the worst-case running time \(T(n)\) of the recursive insertion sort algorithm is:
+
+\[
+T(n) = T(n-1) + (n-1)
+\]
+
+### Solving the Recurrence
+
+To solve this recurrence and find an explicit formula for \(T(n)\), observe that it unfolds as follows for the worst case:
+
+\[
+\begin{align*}
+T(n) & = T(n-1) + (n-1) \\
+     & = (T(n-2) + (n-2)) + (n-1) \\
+     & = ((T(n-3) + (n-3)) + (n-2)) + (n-1) \\
+     & = \dots \\
+     & = 1 + 2 + 3 + \dots + (n-2) + (n-1)
+\end{align*}
+\]
+
+The sum \(1 + 2 + 3 + \dots + (n-2) + (n-1)\) is the sum of the first \(n-1\) positive integers, which can be calculated using the formula:
+
+\[
+\frac{(n-1)n}{2}
+\]
+
+Therefore, the explicit formula for the worst-case running time \(T(n)\) is:
+
+\[
+T(n) = \frac{(n-1)n}{2} = \frac{n^2 - n}{2}
+\]
+
+This shows that the worst-case running time of the recursive insertion sort algorithm is \(O(n^2)\), which is consistent with the running time of the iterative version of insertion sort.

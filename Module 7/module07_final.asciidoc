@@ -1,0 +1,153 @@
+:stem:
+
+= Problem Set 7
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+We perform a sequence of stem:[text(PUSH)] and stem:[text(POP)] operations on a
+stack whose size never exceeds stem:[k]. After every stem:[k] operations, a copy
+of the entire stack is made automatically, for backup purposes. Show that the
+cost of stem:[n] stack operations, including copying the stack, is stem:[O(n)]
+by assigning suitable amortized costs to the various stack operations.
+
+=== Problem 2
+Consider an ordinary binary min-heap data structure supporting the instructions
+stem:[text(INSERT)] and stem:[text(EXTRACT-MIN)] that, when there are stem:[n]
+items in the heap, implements each operation in stem:[O(log n)] worst-case time.
+Give a potential function stem:[Phi] such that the amortized cost of
+stem:[text(INSERT)] is stem:[O(log n)] and the amortized cost of
+stem:[text(EXTRACT-MIN)] is stem:[O(1)], and show that your potential function
+yields these amortized time bounds. Note that in the analysis, stem:[n] is the
+number of items currently in the heap, and you do not know a bound on the maximum
+number of items that can ever be stored in the heap.
+
+=== Problem 3
+
+==== Setup
+Binary search of a sorted array takes logarithmic search time, but the time to
+insert a new element is linear in the size of the array. We can improve the
+time for insertion by keeping several sorted arrays.
+
+Specifically, suppose that we wish to support stem:[text(SEARCH)] and
+stem:[text(INSERT)] on a set of stem:[n] elements. Let stem:[k =
+|~ log(n + 1) ~|], and let the binary representation of stem:[n] be
+stem:[<<n_{k-1}, n_{k-2}, ..., n_0>>]. Maintain stem:[k] sorted arrays
+stem:[A_0, A_1, ..., A_{k-1}], where for stem:[i = 0, 1, ..., k-1], the length
+of array stem:[A_i] is stem:[2^i]. Each array is either full or empty, depending
+on whether stem:[n_i = 1] or stem:[n_i = 0], respectively. The total number of
+elements held in all stem:[k] arrays is therefore stem:[Sigma_{i=0}^{k-1}
+n_i 2^i = n]. Although each individual array is sorted, elements in different
+arrays bear no particular relationship to each other.
+
+==== Part A
+Describe how to perform the stem:[text(SEARCH)] operation for this data
+structure. Analyze its worst-case running time.
+
+==== Part B
+Describe how to perform the stem:[text(INSERT)] operation. Analyze its
+worst-case and amortized running times, assuming that the only operations are
+stem:[text(INSERT)] and stem:[text(SEARCH)].
+
+==== Part C
+Describe how to implement stem:[text(DELETE)]. Analyze its worst-case and
+amortized running times, assuming that there can be stem:[text(DELETE)],
+stem:[text(INSERT)], and stem:[text(SEARCH)] operations.
+
+
+== Answers
+
+=== Answer 1
+
+We can assign two credits to each stack operation (push or pop): one to perform the operation and another to accumulate within the stack. This credit system can cover both the individual operations and the backup copying that occurs every stem:[k] operations, since after stem:[k] operations, stem:[k] credits are used to pay for copying up to stem:[k] elements. Although this amortized cost analysis assumes the stack reaches maximum capacity and that all operations uniformly contribute to the accumulation of credits, the total cost for stem:[n] operations is proven to be stem:[O(n)], given that each cycle of operations is self-sustaining. This analysis could be further refined by using multipop, thus pop and multipop could be each worth one credit, and push could be worth two credits.
+
+
+=== Answer 2
+
+By the equation 16.2, we know that the amortized cost of an operation is the actual cost plus the change in potential due to the operation.
+
+In this case, lets assume that INSERT the stem:[n] costs stem:[log n] and EXTRACT-MIN, when there are stem:[n] items in the heap, also costs stem:[log n]. We can charge the inserting of an stem:[n^{th}] element by twice stem:[log n] and the getting rid of the minimum element by stem:[log n]. 
+
+stem:[Phi(D_i) = n * log n]
+
+INSERT: stem:[Phi(D_i) = O(log n) + log n = O(log n)]
+
+EXTRACT-MIN: stem:[Phi(D_i) = O(log n) - log n = O(1)]
+
+For the INSERT operation, we can say that stem:[O(log n)] is the worst-case cost of inserting an element due to the heap property. Before the operation, if there are stem:[n] elements in the heap, the potential function is stem:[Phi = n * log n]. After the operation, when an element is inserted, the heap has stem:[n + 1] elements, thus the potential is stem:[(n + 1) * log(n + 1)].
+
+For the EXTRACT-MIN operation, we can say that stem:[O(log n)] is the worst-case cost of extracting the minimum element due to the heap property. Before the operation, if there are stem:[n] elements in the heap, the potential function is stem:[Phi = n * log n]. After the operation, when the minimum element is extracted, the heap has stem:[n - 1] elements, thus the potential is stem:[(n - 1) * log(n - 1)].
+
+
+=== Answer 3A
+
+We need to ensures all arrays that could potentially contain the element are checked, given no prior knowledge of which array actually contains the element due to their independent sorting.
+
+The data structure consists of several sorted arrays stem:[A_0, A_1, ..., A_{k-1}], each corresponding to a bit in the binary representation of stem:[n]. A bit stem:[n_i = 1] indicates that the corresponding array stem:[A_i] (holding stem:[2^i] elements) is full and should be considered for the search. However, the values within these arrays have no predetermined relationship to each other, thus requiring a search in potentially multiple arrays.
+
+==== Steps for SEARCH Operation:
+1. *Iterate Over Each Array*: For each index stem:[i] from 0 to stem:[k-1], check if stem:[n_i = 1], indicating that stem:[A_i] is non-empty.
+2. *Perform Binary Search*: For each non-empty stem:[A_i], perform a binary search to look for the target element.
+3. *Return Result*: If the element is found in any stem:[A_i], return it; otherwise, if none of the arrays contain the element, conclude that it is not in the structure.
+
+[source,pseudocode]
+----
+Search(A, n, key)
+    i = 0
+    while n > 0
+        if n is odd then
+            pos = Binary_Search(A[i], 2^i, key)
+            if pos found then
+                return (i, pos)
+            end if
+        end if
+        n = n // 2
+        i = i + 1
+    end while
+    return "element not found"
+----
+
+==== Worst-Case Running Time Analysis:
+- *Binary Search Cost*: The cost of performing a binary search on an array of size stem:[2^i] is stem:[O(log 2^i) = O(i)].
+- *Total Cost*: We need to potentially search through multiple arrays. If every bit stem:[n_i] up to stem:[k-1] (where stem:[k = |~log(n + 1)~|]) could be set, we might have to search in up to stem:[k] different arrays. The worst-case cost of searching all relevant arrays accumulates to:
+
+
+[stem]
+++++
+O(1) + O(2) + ... + O(k) = O(k^2) = O((log n)^2)
+++++
+
+=== Answer 3B
+
+Since there are stem:[k] arrays where each array saize is determined by powers of 2 and depends on the binary representation of the total number of elements, we use merging to combine arrays when inserting an new element.
+
+Generating stem:[B_i] for each stem:[i] from 0 to stem:[k-1] incurs a cost of stem:[O(2^i)]. We can omit the costs associated with array reassignments as these can be managed with simple condition checks. The total cost for an insertion operation sums to stem:[O(2^i)] for the smallest stem:[i] meeting stem:[n_i = 0], resulting in stem:[O(2^{k_n+1})] where stem:[k_n] indicates the highest index where the array is initially full.
+
+For a series of insertion operations where stem:[n] ranges from 1 to stem:[N], stem:[B_0] is initialized stem:[N] times(will use uppercase to denote total operations over a series), stem:[B_1] is initialized stem:[N/2] times, and this pattern continues such that stem:[B_i] is initialized stem:[N/2^i] times, with stem:[B_k] being created just once. Thus, the comprehensive cost is calculated as stem:[sum_{i=0}^{k-1} (N/2^i) O(2^i) le sum_{i=0}^{k-1} O(2^k) le O(2^k k)], simplifying further to stem:[O(N log N)]. Consequently, the amortized cost for each of these stem:[N] operations approximates to stem:[O(log N)].
+
+
+We can use the accounting method to analyze the amortized cost. Assign a cost of stem:[lg N] to each insertion. Thus, each item carries stem:[lg N] credit to pay for its later merges as additional items are inserted. Since an individual item can only be merged into a larger list and there are only stem:[lg N] lists, the credit sufficiently covers all future costs the item might incur. Thus, the amortized cost is stem:[O(lg N)].
+
+
+[source,pseudocode]
+----
+Insert(A, n, element)
+    i = 0
+    tempB[0] = [element]
+    while n is odd
+        Perform_Merge(A[i], tempB_i, tempB_{i+1})
+        n = n // 2
+        i = i + 1
+    end while
+    A[i] = tempB[i]
+----
+
+=== Answer 3C
+
+- let stem:[n] be the number of elements in the structure
+
+- let stem:[m] be the index of the smallest stem:[n_m = 1] in the binary representation of stem:[n]
+
+Identify the smallest index stem:[m] for which stem:[n_m != 0] in the binary representation of stem:[n]. If the target deletion item is not located in list stem:[A_m], remove it from its current list and substitute it with an arbitrary item from stem:[A_m]. As we can see from Chapter 13, BST for this replacement can be completed in stem:[O(log n)] time, as locating the element may require searching the largest list, stem:[A_k]. Following this, break down list stem:[A_m] into smaller lists stem:[A_0, A_1, ..., A_{m-1}] according to their indices. Since these lists are pre-sorted, the runtime is primarily decided by the division process, amounting to stem:[O(m)]. So, because there is the potential for locating the element by searching the largest list, in the worst-case scenario, this complexity remains stem:[O(log n)].

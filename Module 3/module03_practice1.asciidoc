@@ -1,0 +1,35 @@
+:stem:
+
+= Practice 3-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Show, by means of a counterexample, that the following "greedy" strategy does
+not always determine an optimal way to cut rods. Define the *_density_* of a
+rod of length _i_ to be stem:[p_i // i], that is, its value per inch. The greedy
+strategy for a rod of length _n_ cuts off a first piece of length _i_, where
+stem:[1 <= i <= n], having maximum density. It then continues by applying the
+greedy strategy to the remaining piece of length stem:[n - 1].
+
+
+== Answers
+
+=== Answer 1
+From the book, we have the following example:
+
+[%noheader]
+|===
+| length stem:[i]  | 1 | 2 | 3 | 4
+| price stem:[p_i] | 1 | 5 | 8 | 9
+| Density         | 1 | 2.5 | 2.66 | 2.25
+|===
+
+The greedy algorithm would first cut the rod into a piece of length 3 as it takes in account the density.
+This would leave a rod of length and value of 1. However, if we cut the rod into two pieces of length 2, the total value would be 10. Thus, this is a simple case where the greedy algorithm doesn't always determine an optimal way to cut rods.
+
+
+
+

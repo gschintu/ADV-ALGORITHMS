@@ -1,0 +1,46 @@
+:stem:
+
+= Practice 8-2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Give pseudocode for a parallel algorithm that multiplies two stem:[n xx n]
+matrices with work stem:[Theta(n^3)] but span only stem:[Theta(log n)]. Analyze
+your algorithm.
+
+
+== Answers
+
+=== Answer 1
+
+Using example of P-MATRIX-MULTIPLY-RECURSIVE from the book on page 772, we can further elaborate to the following pseudocode:
+
+----
+Function ParallelMatrixMultiply(A, B):
+    n = A.rows  // Assuming A and B are square matrices of size n x n
+    if n == 1:
+        return A[0][0] * B[0][0]  // Base case: just multiply the single elements
+    else:
+        // Partition A and B into four submatrices each
+        A11, A12, A21, A22 = Partition(A)
+        B11, B12, B21, B22 = Partition(B)
+        
+        // Recursively perform matrix multiplication on smaller matrices
+        // Each multiply operation is independent and can run in parallel
+        C11 = ParallelMatrixMultiply(A11, B11) + ParallelMatrixMultiply(A12, B21)
+        C12 = ParallelMatrixMultiply(A11, B12) + ParallelMatrixMultiply(A12, B22)
+        C21 = ParallelMatrixMultiply(A21, B11) + ParallelMatrixMultiply(A22, B21)
+        C22 = ParallelMatrixMultiply(A21, B12) + ParallelMatrixMultiply(A22, B22)
+        
+        // Combine the results into a single matrix C
+        C = Combine(C11, C12, C21, C22)
+        return C
+----
+
+The above pseudocode performs 8 multiplications of stem:[n/2 * n/2] matrices at each level of recursion, so the total work is stem:[T(n) = 8T(n/2) + Theta(n^2)]. By the Master Theorem, this gives a work complexity of stem:[Theta(n^3)].
+However, the span of this algorithm is determined by the depth of the recursion tree. Since we are parallelizing both multiplications and additions, the span grows logarithmically where each recursive steps involves a constant additional amount of work. We can express the span as stem:[S(n) = S(n/2) + Theta(1)], which gives a span complexity of stem:[Theta(log n)].
+
+We can also consider modifying P-MAT-VEC-RECURSIVE from the book on page 763 and spawn to another function to perform the matrix multiplication.

@@ -1,0 +1,18 @@
+:stem:
+
+= Practice 9-3
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Show that the dual of the dual of a linear program is the primal linear
+program.
+
+
+== Answers
+
+=== Answer 1
+
+When we take the dual of this dual program, we essentially perform the same transformation process again. During this second transformation, the inverted roles of coefficients and variables are reverted back to their original configuration, and the inequalities that were reversed in forming the first dual are reversed once more.

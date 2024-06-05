@@ -1,0 +1,24 @@
+:stem:
+
+= Practice 9-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Show that the dual of the dual of a linear program is the primal linear
+program.
+
+
+== Answers
+
+=== Answer 1
+Suppose that our original linear program is in standard form for some
+stem:[A, b, c]. The dual of this is to minimize stem:[sum_{i=1}^{m} b_i y_i]
+subject to stem:[A^T y >= c]. This can be rewritten as maximize
+stem:[sum_{i=1}^{m} (-b_i) y_i] subject to stem:[(-A)^T y <= -c]. Since this
+is in standard form, its dual is minimize stem:[sum_{j=1}^{n} (-c_j) x_j]
+subject to stem:[(-A) x <= -b]. This is the same as maximize
+stem:[sum_{j=1}^{n} c_j x_j] subject to stem:[Ax <= b], which was the original
+linear program.

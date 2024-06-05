@@ -1,0 +1,78 @@
+:stem:
+
+= Practice 2-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problem 1
+Use Strassen's algorithm to compute the matrix product
+stem:[((1, 3), (7, 5)) ((6, 8), (4, 2))].
+
+Show your work.
+
+== Problem 1 Answer
+
+=== Strassen's Algorithm Explanation
+
+Strassen's algorithm is a method of matrix multiplication that is faster than the standard method. It works by dividing each of the matrices into four equal-sized submatrices, then recursively calculating seven products of submatrices, and finally combining these products to get the result.
+
+=== Base Case
+
+The base case for the induction is when the matrices are 1x1, i.e., they consist of a single element. In this case, the product is simply the product of the two elements.
+
+=== Inductive Step
+
+Assume that the algorithm works for matrices of size n/2 x n/2.
+
+Now, we need to prove that it works for matrices of size n x n.
+
+1. Divide each of the matrices into four n/2 x n/2 submatrices.
+2. Calculate seven products of submatrices. These products can be calculated using the assumption that the algorithm works for n/2 x n/2 matrices.
+3. Combine these products to get the final result. This step does not involve any matrix multiplication, so it can be done in linear time.
+
+
+[source,pseudocode]
+----
+Procedure Strassen(A, B)
+  n = rows(A)
+  if n == 1 then
+    return A * B
+  else
+    divide A into four n/2 x n/2 matrices: A11, A12, A21, A22
+    divide B into four n/2 x n/2 matrices: B11, B12, B21, B22
+
+    M1 = Strassen(A11 + A22, B11 + B22)
+    M2 = Strassen(A21 + A22, B11)
+    M3 = Strassen(A11, B12 - B22)
+    M4 = Strassen(A22, B21 - B11)
+    M5 = Strassen(A11 + A12, B22)
+    M6 = Strassen(A21 - A11, B11 + B12)
+    M7 = Strassen(A12 - A22, B21 + B22)
+
+    C11 = M1 + M4 - M5 + M7
+    C12 = M3 + M5
+    C21 = M2 + M4
+    C22 = M1 - M2 + M3 + M6
+
+    C = combine(C11, C12, C21, C22)
+    return C
+  end if
+End Procedure
+
+
+Procedure combine(C11, C12, C21, C22)
+  n = rows(C11) * 2
+  C = new matrix of size n x n
+
+  for i = 1 to n/2 do
+    for j = 1 to n/2 do
+      C[i][j] = C11[i][j]
+      C[i][j + n/2] = C12[i][j]
+      C[i + n/2][j] = C21[i][j]
+      C[i + n/2][j + n/2] = C22[i][j]
+    end for
+  end for
+
+  return C
+End Procedure
+----

@@ -1,0 +1,16 @@
+:stem:
+
+= Practice 1-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problem 1
+In Appendix A, reproduce the following formulas
+
+=== A.1. stem:[sum_{k=1}^{n}k  = (n(n+1))/2]
+
+=== A.4. stem:[sum_{k=0}^{n}k^2  = (n(n+1)(2n+1))/6]
+
+=== A.6. stem:[sum_{k=0}^{n}x^k  = (x^(n+1)-1)/(x-1)]
+
+=== A.11. stem:[sum_{k=0}^{infty}kx^k  = (x)/(1-x)^2]

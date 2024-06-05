@@ -1,0 +1,34 @@
+:stem:
+
+= Practice 9-2
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Rewrite the linear program for maximum flow (from Chapter 29.2) so that it
+uses only stem:[O(V + E)] constraints.
+
+
+== Answers
+
+=== Answer 1
+
+Considering Maximum flow formulas 29.25-29.28, we know we should have stem:[2|V|^2 + |V| - 2] constraints.
+
+We will need to reduce the number of constraints to stem:[O(V + E)], and we can do this by removing the constraints that are not necessary. For instance, stem:[|V|^2] constraints on first and third set can be reduced to just edge constraints. Primarily, we can do this because not every vertex has an edge with capacity, thus, removing them should not affect the solution.
+
+we can rewrite maximize and subject for edges E.
+
+maximize stem:[sum_{v in V} f_{sv} - sum_{v in V} f_{vs}]
+
+subject to (reduce constraints to edges) E:
+
+stem:[f_{uv} <= c(u, v)] every edge stem:[(u, v) in E]
+
+stem:[sum_{v in V} f_{vu} = sum_{v in V} f_{uv}]
+
+for each stem:[u in V - {s, t}]
+
+stem:[f_{uv} >= 0] every stem:[(u, v) in E]

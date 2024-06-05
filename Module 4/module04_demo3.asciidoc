@@ -1,0 +1,28 @@
+:stem:
+:imagesdir: images
+
+* Now let's look at the problem of All-Pairs Shortest Paths. Similar to
+single-source shortest paths but instead we consider every starting/ending
+point pairing. We could easily solve this by using a single-source shortest
+paths algorithm stem:[|V|] times but we can do better with algorithms designed
+specifically to solve all pairs.
+
+* Single-source algorithms expected an adjacency list but in all-pairs we
+usually expect an adjacency matrix.
+
+* Our output is going to be a matrix stem:[l] where stem:[l_{ij}] equals the
+shortest-path weight from stem:[i] to stem:[j] (i.e. stem:[delta(i, j)]).
+
+* We can solve this problem with a dynamic programming algorithm that operates
+similar to matrix multiplication.
+
+* The graph can have negative weight edges but not negative weight cycles.
+
+* We already know that shortest path has optimal substructure.
+
+* Recursive solution TODO
+
+* Bottom up solution TODO
+
+* We can also solve the same problem with another dynamic programming algorithm
+called the Floyd-Warshall algorithm. TODO

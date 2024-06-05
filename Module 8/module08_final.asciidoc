@@ -1,0 +1,489 @@
+:stem:
+
+= Problem Set 8
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Give pseudocode for an efficient parallel version of the Floyd-Warshall
+algorithm. Analyze your algorithm.
+
+=== Problem 2
+
+==== Setup
+Consider the parallel procedure stem:[text(SUM-ARRAYS)] for performing pairwise
+addition on stem:[n]-element arrays stem:[A[1:n\]] and stem:[B[1:n\]], storing
+the sums in stem:[C[1:n\]].
+
+* stem:[text(SUM-ARRAYS)(A, B, C, n)]
+. *parallel for* stem:[i = 1] *to* stem:[n]
+. stem:[text( ) C[i\] = A[i\] + B[i\]]
+
+==== Part A
+Rewrite the parallel loop in stem:[text(SUM-ARRAYS)] using recursive spawning
+in the manner of stem:[text(P-MAT-VEC-RECURSIVE)]. Analyze the parallelism.
+
+==== Setup
+Consider another implementation of the parallel loop in stem:[text(SUM-ARRAYS)]
+given by the procedure stem:[text(SUM-ARRAYS')], where the value
+stem:[text(grain-size)] must be specified.
+
+* stem:[text(SUM-ARRAYS')(A, B, C, n, text(grain-size))]
+. stem:[r = |~ n // text(grain-size) ~|]
+. *for* stem:[k = 0] *to* stem:[r - 1]
+. stem:[text( )] *spawn* stem:[text(ADD-SUBARRAY)
+  (A, B, C, k xx text(grain-size) + 1, min{(k + 1) xx text(grain-size), n})]
+. *sync*
+
+* stem:[text(ADD-SUBARRAY)(A, B, C, i, j)]
+. *for* stem:[k = i] *to* stem:[j]
+. stem:[text( ) C[k\] = A[k\] + B[k\]]
+
+==== Part B
+Suppose that we set stem:[text(grain-size) = 1]. What is the resulting
+parallelism?
+
+==== Part C
+Give a formula for the span of stem:[text(SUB-ARRAYS')] in terms of stem:[n] and
+stem:[text(grain-size)]. Derive the best value for stem:[text(grain-size)] to
+maximize parallelism.
+
+=== Problem 3
+
+==== Setup
+Computational science is replete with algorithms that require the entries of an
+array to be filled in with values that depend on the values of certain already
+computed neighboring entries, along with other information that does not change
+over the course of the computation. The pattern of neighboring entries does not
+change during the computation and is called a *stencil*. For example, the
+longest common subsequence algorithm from a previous module, where the value in
+entry stem:[c[i, j\]] depends only on the values in stem:[c[i-1, j\]],
+stem:[c[i, j-1\]], and stem:[c[i-1, j-1\]], as well as the elements stem:[x_i]
+and stem:[y_j] within the two sequences given as inputs. The input sequences are
+fixed, but the algorithm fills in the two-dimensional array stem:[c] so that it
+computes entry stem:[c[i, j\]] after computing all three entries
+stem:[c[i-1, j\]], stem:[c[i, j-1\]], and stem:[c[i-1, j-1\]].
+
+This problem examines how to use recursive spawning to parallelize a simple
+stencil calculation on an stem:[n xx n] array stem:[A] in which the value placed
+into entry stem:[A[i, j\]] depends only on values in stem:[A[i', j'\]], where
+stem:[i' <= i] and stem:[j' <= j] and of course, stem:[i' != i] or
+stem:[j' != j]. In other words, the value in an entry depends only on values in
+entries that are above it and/or to its left, along with static information
+outside of the array. Furthermore, we assume throughout this problem that once
+the entries upon which stem:[A[i, j\]] depends have been filled in, the entry
+stem:[A[i, j\]] can be computed in stem:[Theta(1)] time.
+
+Partition the stem:[n xx n] array stem:[A] into four stem:[n // 2 xx n // 2]
+subarrays as follows:
+
+[stem]
+++++
+A = (
+(A_11, A_12),
+(A_21, A_22)
+)
+++++
+
+We can immediately fill in subarray stem:[A_11] recursively, since it does not
+depends on the entries in the other three subarrays. Once the computation of
+stem:[A_11] finishes, we can fill in stem:[A_12] and stem:[A_21] recursively in
+parallel, because although they both depend on stem:[A_11], they do not depend
+on each other. Finally, we can fill in stem:[A_22] recursively.
+
+==== Part A
+Give parallel pseudocode that performs this simple stencil calculation using
+a divide-and-conquer algorithm stem:[text(SIMPLE-STENCIL)] based on the setup
+and the decomposition of stem:[A]. (Don't worry about the details of the base
+case, which depends on the specific stencil.) Give and solve recurrences for the
+work and span of this algorithm in terms of stem:[n]. What is the parallelism?
+
+==== Part B
+Modify your solution to part A to divide an stem:[n xx n] array into nine
+stem:[n // 3 xx n // 3] subarrays, again recursing with as much parallelism as
+possible. Analyze this algorithm. How much more or less parallelism does this
+algorithm have compared with the algorithm from part A.
+
+==== Part C
+Generalize your solutions to parts A and B as follows. Choose an integer
+stem:[b >= 2]. Divide an stem:[n xx n] array into stem:[b^2] subarrays, each of
+size stem:[n // b xx n // b], recursing with as much parallelism as possible.
+In terms of stem:[n] and stem:[b], what are the work, span, and parallelism of
+this algorithm? Argue that, using this approach, the parallelism must be
+stem:[o(n)] for any choice of stem:[b >= 2].
+
+TIP: For this argument, show that the exponent of stem:[n] in the parallelism
+is strictly less than 1 for any choice of stem:[b >= 2].
+
+==== Part D
+Give pseudocode for a parallel algorithm for this simple stencil calculation
+that achieves stem:[Theta(n // log n)] parallelism. Argue using notions of work
+and span that the problem has stem:[Theta(n)] inherent parallelism. Unfortunely,
+simple fork-join parallelism does not let you achieve this maximal parallelism.
+
+=== Problem 4
+
+==== Setup
+The stem:[text(P-MATRIX-MULTIPLY-RECURSIVE)] procedure from chapter 26.2 must
+allocate a temporary matrix stem:[D] of size stem:[n xx n], which can adversely
+affect the constants hidden by the stem:[Theta]-notation. The procedure has
+high parallelism, however: stem:[Theta(n^3 // log^2 n)]. For example, ignoring
+the constants in the stem:[Theta]-notation, the parallelism for multiplying
+stem:[1000 xx 1000] matrices comes to approximately stem:[1000^3 // 10^2 = 10^7],
+since stem:[log 1000 ~~ 10]. Most parallel computers have far fewer than 10
+million processors.
+
+==== Part A
+Parallelize stem:[text(MATRIX-MULTIPLY-RECURSIVE)] from chapter 4.1
+without using temporary
+matrices so that it retains it stem:[Theta(n^3)] work.
+
+TIP: Spawn the recursive calls, but insert a *sync* in a judicious location to
+avoid races.
+
+==== Part B
+Give and solve recurrences for the work and span of your implementation.
+
+==== Part C
+Analyze the parallelism of your implementation. Ignoring the constants in the
+stem:[Theta]-notation, estimate the parallelism on stem:[1000 xx 1000] matrices.
+Compare with the parallelism of stem:[text(P-MATRIX-MULTIPLY-RECURSIVE)], and
+discuss whether the trade-off would be worthwhile.
+
+
+== Answers
+
+=== Answer 1
+
+From exercise 23.2-4, while the Floyd-Warshall algorithm requires stem:[Theta(n^3)] work. However, if we drop all the superscripts, we can parallelize the first part. 
+
+[pseudocode]
+----
+
+P-FLOYD-WARSHALL(W)
+    n = W.rows
+    parallel for i=1 to n
+        parallel for j=1 to n
+            D[0][i][j] = W[i][j]
+    for k=1 to n
+        parallel for i=1 to n
+            parallel for j=1 to n
+                D[k][i][j] = min(D[k-1][i][j], D[k-1][i][k] + D[k-1][k][j])
+    return D[n]
+
+
+----
+
+The span of the doubly nested **for** loops is performing constant work at stem:[Theta(log n)]. However, the second set of doubly nested parallel **for** loops runs in the bound of stem:[n] iterations. We can then say that the span of the algorithm is stem:[Theta(n log n)]. Thus, stem:[n^3 / (n log n) = n^2 / log n] is the parallelism of the algorithm.
+
+
+=== Answer 2A
+
+[pseudocode]
+----
+SUM-ARRAYS-RECURSIVE(A, B, C, i, i')
+    if i' == i
+        C[i] = A[i] + B[i]
+    else
+        mid = (i + i') / 2
+        spawn SUM-ARRAYS-RECURSIVE(A, B, C, i, mid)
+        SUM-ARRAYS-RECURSIVE(A, B, C, mid + 1, i')
+        sync
+----
+
+The depth of the recursive calls corresponds to stem:[log n], where stem:[n] is the number of elements in the arrays. Each level of recursion ideally halves the number of elements to be processed. The total work is the same as the running time of the serial algorithm, which is stem:[O(n)]. The span of the algorithm is stem:[O(log n)], which is the depth of the recursion. The parallelism is stem:[O(n / log n)].
+
+=== Answer 2B
+
+If grain-size is 1, each call of ADD-SUBARRAY handles only a single pair of numbers. This configuration means the loop from the main procedure SUM-ARRAYS' iterates n times, with each iteration spawning a task that performs just one addition. Consequently, the total work done (the sum of all tasks) is still stem:[O(n)], as each addition is an stem:[O(1)] operation executed stem:[n] times.
+ 
+=== Answer 2C
+
+Let stem:[g] be the grain-size. The runtime of the function that spawns all the other tasks is stem:[n / g]. Each task processes stem:[g] elements, so the aim is to minimize the following function to optimize the computational span:
+
+stem:[f(g) = n/g + g]
+
+Taking the derivative and setting it to zero for optimization:
+
+
+stem:[f'(g) = -n/g^2 + 1 = 0]
+
+
+Solving for stem:[g]:
+
+stem:[g^2 = n \Rightarrow g = \sqrt{n}]
+
+Setting stem:[g = \sqrt{n}] minimizes the function, hence minimizing the span which becomes:
+
+stem:[T_{\text{span}} = n/\sqrt{n} + \sqrt{n} = 2\sqrt{n}]
+
+Thus, the span is stem:[O(\sqrt{n})]. The resulting parallelism, which measures how well the computational workload is distributed across processors, is:
+
+stem:[\text{Parallelism} = n/\sqrt{n} = \sqrt{n}]
+
+This optimization reflects an efficient utilization of up to stem:[\sqrt{n}] processors.
+
+
+=== Answer 3A
+
+For the sake of simplicity, if we partition the stem:[n xx n] array stem:[A] into four stem:[n // 2 xx n // 2], we can assume that stem[n] is a power of 2, thus stem:[n/2] is an integer and we don't need to worry about floor or ceiling functions. Also, as we don't need to worry about the base case, we will delegate that to the BASE-CASE-STENCIL-CALC function.
+[pseudocode]
+----
+
+SIMPLE-STENCIL(A, i, j, n)
+    if n == 1
+        A[i, j] = BASE-CASE-STENCIL-CALC(A, i, j)
+    else
+        // Calculate submatrix A_11
+        SIMPLE-STENCIL(A, i, j, n/2)
+
+        // use spawn to parallel the calculation of submatrices A_12 and A_21
+        spawn SIMPLE-STENCIL(A, i, j + n/2, n/2)
+        SIMPLE-STENCIL(A, i + n/2, j, n/2)
+        sync  // Need to ensure A_12 and A_21 are done before proceeding
+
+        // Calculate submatrix A_22
+        SIMPLE-STENCIL(A, i + n/2, j + n/2, n/2)
+        
+
+----
+
+Observing that the function recursively divides the problem into four equal subproblems, we can write the recurrence relation as:
+
+stem:[T(n) = 4T(n/2) + O(1)], where the base case is stem:[T(1) = Theta(1)] as stated in the Setup. Using the Master Theorem, we can determine the work and span of the algorithm. The Master Theorem states that if stem:[T(n) = aT(n/b) + f(n)], where stem:[a >= 1] and stem:[b > 1], and stem:[f(n)] is a function, then:
+
+stem:[T(n) = Theta(n^log_b(a))], if stem:[f(n) = Theta(n^log_b(a))]
+stem:[T(n) = Theta(f(n))], if stem:[f(n) = O(n^log_b(a - e))] for some stem:[e > 0]
+
+In this case, stem:[a = 4], stem:[b = 2], and stem:[f(n) = O(1)]. Therefore, the work recurrence is stem:[Theta(n^2)]
+
+For the span, we can write the recurrence relation as:
+
+stem:[S(n) = S(n/2) + S(n/2) + S(n/2) = 3S(n/2) + O(1)], where the base case is stem:[S(1) = Theta(1)]. Using the Master Theorem, we can determine the work and span of the algorithm. The Master Theorem states that if stem:[T(n) = aT(n/b) + f(n)], where stem:[a >= 1] and stem:[b > 1], and stem:[f(n)] is a function, then:
+
+This recurrence fits into the case where stem:[a > b^{log_b(d)}], where stem:[d] is the exponent in stem:[f(n) = Theta(n^d)], and stem:[d=0] because stem:[f(n) = O(1)].
+
+Therefore, the span recurrence is stem:[Theta(n^{log_2(3)}) = Theta(n^{1.585})]
+
+=== Answer 3B
+
+If we expand answer 3A, for the stem:[n // 3 xx n // 3] matrix we have 9 dependencies, but they can be solved into 5 groups, and we should be able to parallelize the calculation of the groups. 
+
+[pseudocode]
+----
+
+SIMPLE-STENCIL-3M(A, i, j, n)
+    if n == 1
+        A[i, j] = BASE-CASE-STENCIL-CALC(A, i, j)
+    else
+        // Group 1 submatrix A_11
+        SIMPLE-STENCIL-3M(A, i, j, n/3)
+        
+        // Group 2 submatrices A_12 and A_21
+        spawn SIMPLE-STENCIL-3M(A, i, j + n/3, n/3)
+        SIMPLE-STENCIL-3M(A, i + n/3, j, n/3)
+        sync
+        
+        // Group 3 submatrix A_13, A_22, and A_31
+        spawn SIMPLE-STENCIL-3M(A, i, j + 2*n/3, n/3)
+        spawn SIMPLE-STENCIL-3M(A, i + n/3, j + n/3, n/3)
+        SIMPLE-STENCIL-3M(A, i + 2*n/3, j, n/3)
+        sync
+        
+        // Group 4 submatrix A_23 and A_32
+        spawn SIMPLE-STENCIL-3M(A, i + n/3, j + 2*n/3, n/3)
+        SIMPLE-STENCIL-3M(A, i + 2*n/3, j + n/3, n/3)
+        sync
+        
+        // Group 5 submatrix A_33
+        SIMPLE-STENCIL-3M(A, i + 2*n/3, j + 2*n/3, n/3)
+
+----
+
+Similar to the answer 3A, we can write the work recurrence relation as:
+
+stem:[T(n) = 9T(n/3) + O(1)], which fits the Master Theorem and the work recurrence is stem:[Theta(n^2)].
+
+Since we have 5 groups, the span recurrence relation is:
+
+stem:[S(n) = 5S(n/3) + O(1)], which also fits the Master Theorem and the span recurrence is stem:[Theta(n^{log_3(5)}) = Theta(n^{1.465})].
+
+=== Answer 3C
+
+
+
+[pseudocode]
+----
+
+GENERIC-STENCIL(A, A2, n, m, b)
+    if (n != 0) && (m != 0) then
+        if (n == 1) && (m == 1) then
+            // Compute base case
+            BASE-CASE-STENCIL-CALC(A2[1, 1])
+        else
+            // Calculate dimensions of subarrays
+            let ni[] = floor((i * n) / b) for i = 1 to b
+            let mi[] = floor((i * m) / b) for i = 1 to b
+            let n0 = m0 = 1
+            // First half of the process
+            for k = 2 to b + 1 do
+                for i = 1 to k - 2 do
+                    spawn GENERIC-STENCIL(A, A2[ni[i - 1] : ni[i], mi[k - i - 1] : mi[k - i]], b)
+                end for
+                GENERIC-STENCIL(A, A2[ni[k - 2] : ni[k - 1], mi[0] : mi[1]], b)
+                sync
+            end for
+            // Second half of the process
+            for k = b + 2 to 2b do
+                for i = 1 to 2b - k do
+                    spawn GENERIC-STENCIL(A, A2[ni[b - k + i - 1] : ni[b - k + i], mi[b - i - 1] : mi[b - i]], b)
+                end for
+                GENERIC-STENCIL(A, A2[ni[3b - 2k] : ni[3b - 2k + 1], mi[2k - 2b] : mi[2k - 2b + 1]], b)
+                sync
+            end for
+        end if
+    end if
+----
+
+The work done by the algorithm, considering each subproblem is a fraction of the original size, is expressed by:
+
+stem:[T(n) = b^2 T(n/b) + Theta(1) = Theta(n^2)]
+
+And for the subsequent span, we have:
+
+stem:[S(n) = (2b-1) T(n/b) + Theta(1) = Theta((n^{log_b(2b-1)}))]
+
+And the parallelism is:
+
+stem:[P(n) = Theta(n^{2 - log_b(2b-1)})]
+
+To demonstrate that parallelism is stem:[o(n)], we analyze the exponent of stem:[n] in the parallelism expression:
++
+- Given that stem:[log_b(2b-1) > log_b b = 1] because stem:[2b-1 > b], we find:
+
+stem:[2 - log_b(2b-1) < 2 - 1 = 1]
+
+This implies:
+
+stem:[log_b(2b) - log_b(2b - 1) < 1]
+
+Which simplifies further as:
+
+stem:[log_b\left(\frac{2b}{2b - 1}\right) < 1]
+
+Using the properties of exponents, this inequality can be expressed as:
+
+stem:[\frac{2b}{2b - 1} < b]
+
+Further simplification leads to:
+
+stem:[2b < 2b - b]
+
+We rearrange to show:
+
+stem:[0 < 2b - 3b]
+
+And simplifying:
+
+stem:[0 < (2 - 3b)b]
+
+Given that stem:[b \geq 2], we substitute to find:
+
+stem:[0 < (2b - 3)b]
+
+This final inequality holds for stem:[b \geq 2], completing the proof that stem:[2 - log_b(2b - 1) < 1] under the conditions given.
+
+=== Answer 3D
+
+[pseudocode]
+----
+SIMPLE-STENCIL(A, i, j, n)
+    if n == 1
+        A[i, j] = BASE-CASE-STENCIL-CALC(A, i, j)
+    else
+        // Process each diagonal in parallel where possible
+        // Diagonals from the top-left to the center
+        for k = 2 to n + 1 do
+            for idx = 1 to k - 2 do
+                spawn SIMPLE-STENCIL(A, i + idx - 1, j + k - idx - 1, 1) // reduced to base case
+            end for
+            SIMPLE-STENCIL(A, i + k - 2, j + 1 - 1, 1)
+            sync  // Ensure all computations on this diagonal are completed
+        end for
+
+        // Diagonals from the center to the bottom-right
+        for k = n + 2 to 2 * n do
+            for idx = 1 to 2 * n - k do
+                spawn SIMPLE-STENCIL(A, i + idx - 1, j + k - idx - 1, 1) //reduced to base case
+            end for
+            sync  // Ensure all computations on this diagonal are completed
+        end for
+----
+
+The span of the algorithm is equal to the time taken to process the longest diagonal, which is stem:[O(n)]. However, if we add the spans of all the diagonals, so, for each loop we get stem:[Theta(log n)], 
+because:
+
+stem:[S(n) = ((log 1 + log 2 + log n) + (log(n -1) + 1)))]
+stem:[S(n) = (log(n!) + log(n - 1)!)]
+stem:[S(n) = (n log n)]
+
+Thus the parallelism is stem:[Theta(n / log n)].
+
+
+=== Answer 4A
+
+While retaining stem:[Theta(n^3)] work, we can modify the MATRIX-MULTIPLY-RECURSIVE (section 4.1 on page 83) and P-MATRIX-MULTIPLY-RECURSIVE (on page 772) algorithms to avoid the need for temporary matrices by using a divide-and-conquer approach. The modified algorithm will spawn recursive calls for each submatrix multiplication, ensuring that the results are correctly placed in the final matrix. A *sync* operation is used to ensure that all submatrix multiplications are completed before proceeding to the next step.
+
+[pseudocode]
+----
+P-MATRIX-MULTIPLY-RECURSIVE(A, B, C, n)
+1. if n == 1
+2.     // Base case: direct multiplication
+3.     c11 = c11 + a11 * b11
+4.     return
+5. else
+6.     // Divide A, B, and C into n/2 x n/2 submatrices
+7.     partition A into A11, A12, A21, A22
+8.     partition B into B11, B12, B21, B22
+9.     partition C into C11, C12, C21, C22
+10.
+11.    // Parallel recursive multiplication for the first set of products
+12.    spawn P-MATRIX-MULTIPLY-RECURSIVE(A11, B11, C11, n/2)
+13.    spawn P-MATRIX-MULTIPLY-RECURSIVE(A11, B12, C12, n/2)
+14.    spawn P-MATRIX-MULTIPLY-RECURSIVE(A21, B11, C21, n/2)
+15.    spawn P-MATRIX-MULTIPLY-RECURSIVE(A21, B12, C22, n/2)
+16.    sync  // Ensure all first set operations complete
+17.
+18.    // Parallel recursive multiplication for the second set of products
+19.    spawn P-MATRIX-MULTIPLY-RECURSIVE(A12, B21, C11, n/2)
+20.    spawn P-MATRIX-MULTIPLY-RECURSIVE(A12, B22, C12, n/2)
+21.    spawn P-MATRIX-MULTIPLY-RECURSIVE(A22, B21, C21, n/2)
+22.    spawn P-MATRIX-MULTIPLY-RECURSIVE(A22, B22, C22, n/2)
+23.    sync  // Ensure all second set operations complete
+----
+
+=== Answer 4B
+
+The work recurrence relation for the modified P-MATRIX-MULTIPLY-RECURSIVE algorithm is stem:[T(n) = 8T(n/2) + Theta(n^2)], where the base case is stem:[T(1) = Theta(1)]. Using the Master Theorem, we can determine the work and span of the algorithm. The Master Theorem states that if stem:[T(n) = aT(n/b) + f(n)], where stem:[a >= 1] and stem:[b > 1], and stem:[f(n)] is a function, then:
+
+stem:[T(n) = Theta(n^{log_b(a)})], if stem:[f(n) = Theta(n^{log_b(a)})]
+stem:[T(n) = Theta(f(n))], if stem:[f(n) = O(n^{log_b(a - e)})] for some stem:[e > 0]
+
+In this case, stem:[a = 8], stem:[b = 2], and stem:[f(n) = Theta(n^2)]. Therefore, the work recurrence is stem:[Theta(n^3)]
+
+For the span, we can write the recurrence relation as:
+
+stem:[S(n) = 2S(n/2) + Theta(1)], where the base case is stem:[S(1) = Theta(1)]. Using the Master Theorem, we can determine the work and span of the algorithm. The Master Theorem states that if stem:[T(n) = aT(n/b) + f(n)], where stem:[a >= 1] and stem:[b > 1], and stem:[f(n)] is a function, then:
+
+This recurrence fits into the case where stem:[a = b^{log_b(d)}], where stem:[d] is the exponent in stem:[f(n) = Theta(n^d)], and stem:[d=0] because stem:[f(n) = O(1)].
+
+Therefore, the span recurrence is stem:[Theta(n)]
+
+
+=== Answer 4C
+
+From Answer 4B we can deduct that the parallelism of the modified P-MATRIX-MULTIPLY-RECURSIVE algorithm is stem:[Theta(n^3 / n) = Theta(n^2)]. This is a significant improvement over the parallelism of the P-MATRIX-MULTIPLY-RECURSIVE algorithm, which is stem:[Theta(n^3 / log^2 n)]. The trade-off between the two algorithms is worthwhile because the modified algorithm achieves a higher level of parallelism while retaining the same work complexity.
+
+Therefore, for a matrix of size stem:[1000 xx 1000], the parallelism of the modified algorithm is approximately stem:[1000^2 = 10^6], which is significantly higher than the parallelism of the original algorithm, which is approximately stem:[1000^3 // 10^2 = 10^7]. This improvement in parallelism allows for better utilization of the available processors and faster computation of the matrix multiplication.

@@ -1,0 +1,25 @@
+:stem:
+
+= Practice 4-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Given a weighted, directed graph stem:[G = (V, E)] with no negative-weight
+cycles, let stem:[m] be the maximum over all vertices stem:[v in V] of the
+minimum number of edges in a shortest path from the source stem:[s] to stem:[v].
+In other words, stem:[m] is the maximum number of edges needed to
+construct a shortest path from stem:[s] to any other vertex.
+
+Suggest a simple change to the Bellman-Ford algorithm that allows it to
+terminate in stem:[m + 1] passes, even if stem:[m] is not known in advance.
+
+==== Hints
+* Here, the shortest path is by weight, not the number of edges.
+
+
+== Answers
+
+=== Answer 1

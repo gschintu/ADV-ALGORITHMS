@@ -1,0 +1,286 @@
+:stem:
+
+= Problem Set 4
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+There are two types of professional wrestlers: "faces" (short for "babyfaces",
+i.e., "good guys") and "heels" ("bad guys"). Between any pair of professional
+wrestlers, there may or may not be a rivalry. You are given the names of
+stem:[n] professional wrestlers and a list of stem:[r] pairs of wrestlers for
+which there are rivalries. Give an stem:[O(n + r)]-time algorithm that
+determines whether it is possible to designate some of the wrestlers as faces
+and the remainder as heels such that each rivalry is between a face and a heel.
+If it is possible to perform such a designation, your algorithm should
+produce it.
+
+=== Problem 2
+Give an algorithm that determines whether an undirected graph stem:[G = (V, E)]
+contains a simple cycle. Your algorithm should run in stem:[O(V)] time,
+independent of stem:[|E|].
+
+=== Problem 3
+Modify the Bellman-Ford algorithm so that it sets stem:[v.d] to stem:[-oo] for
+all vertices stem:[v] for which there is a negative-weight cycle on some
+path from the source to stem:[v].
+
+=== Problem 4
+Show how to use the output of the Floyd-Warshall algorithm to detect the
+presence of a negative-weight cycle.
+
+=== Problem 5
+As it appears on page 657 of the text, the Floyd-Warshall algorithm requires
+stem:[Theta(n^3)] space, since it creates stem:[d_{ij}^{(k)}] for
+stem:[i, j, k = 1, 2, ..., n]. Show that the procedure
+stem:[text(FLOYD-WARSHALL')], which simply drops all the superscripts, is
+correct, and thus only stem:[Theta(n^2)] space is required.
+
+* stem:[text(FLOYD-WARSHALL')(W, n)]
+. stem:[D = W]
+. stem:[text(for ) k = 1 text( to ) n]
+. stem:[text( ) text(for ) i = 1 text( to ) n]
+. stem:[text( ) text( ) text(for ) j = 1 text( to ) n]
+. stem:[text( ) text( ) text( ) d_{ij} = min{d_{ij}, d_{ik} + d_{kj}}]
+. stem:[text(return ) D]
+
+=== Problem 6
+Suppose that we change line 3 of DAG-SHORTEST-PATHS (from page 617 in the text)
+making the procedure read as follows:
+
+* stem:[text(DAG-SHORTEST-PATHS)(G, w, s)]
+. topologically sort the vertices of stem:[G]
+. stem:[text(INITIALIZE-SINGLE-SOURCE)(G, s)]
+. *for* the first stem:[|V| - 1] vertices, taken in topologically sorted order
+. stem:[text( )] *for* each vertex stem:[v] in stem:[text(G.Adj)[u\]]
+. stem:[text( ) text( ) text(RELAX)(u, v, w)]
+
+Show that the procedure remains correct.
+
+
+== Answers
+
+=== Answer 1
+
+The algorithm determines whether it is possible to designate wrestlers as "faces" (good guys) or "heels" (bad guys) based on their rivalries.
+
+==== Assumptions
+
+. A rivalry (`A`, `B`) indicates a rivalry between `A` and `B`, without specifying roles.
+. Wrestlers not involved in rivalries are not considered.
+. Any solution dividing wrestlers into faces and heels is acceptable.
+
+==== Algorithm Description
+
+. Discard all vertices of degree 0.
+. Separate all connected components of the graph.
+. For each connected component `C` = (`V_c`, `E_c`):
+.. Choose a vertex `r` at random and designate as a face.
+.. Perform a modified breadth-first search (BFS) from `r`:
+... Vertices at even path lengths from `r` are faces.
+... Vertices at odd path lengths from `r` are heels.
+.. Check each edge in `E_c`. If an edge connects vertices of the same type, return false.
+. If all edges satisfy the face-heel condition, the partition is successful.
+
+[pseudocode]
+----
+ModifiedBFS(G, s)
+    for each vertex u in G - {s}
+        u.color = WHITE
+        u.distance = -1 // infinity
+        u.parent = NIL
+
+    s.color = GRAY
+    s.distance = 0
+    s.parent = NIL
+
+    Queue Q = empty
+    ENQUEUE(Q, s)
+
+    while Q is not empty
+        u = DEQUEUE(Q)
+        for each vertex v in G.Adj[u]
+            if v.color == WHITE
+                v.color = GRAY
+                v.distance = u.distance + 1
+                v.parent = u
+                ENQUEUE(Q, v)
+        u.color = BLACK
+
+    for each edge (u, v) in G
+        if u.distance % 2 == v.distance % 2
+            return "It is not possible to partition the wrestlers as required."
+
+    return "The partition is successful."
+----
+
+==== Complexity
+
+The time complexity is stem:[O(V + E)], where `|V|` = `n` (number of wrestlers) and `|E|` = `r` (number of rivalries), due to the breadth-first search operation.
+
+[stem]
+++++
+O(n + r)
+++++
+
+=== Answer 2
+
+Give an algorithm that determines whether an undirected graph stem:[G = (V, E)]
+contains a simple cycle. Your algorithm should run in stem:[O(V)] time, independent of stem:[|E|].
+
+==== Assumptions
+
+. if stem:[ E < V], then graph may or may not contain a cycle. We can perform a  graph traversal with DFS algorithm to determine if a cycle exists and exit early if one is found. This will keep the time complexity to stem:[O(V)].
+. if stem:[ E \ge V], then graph contains a cycle.
+. A tree with stem:[V] vertices has V - 1 edges if there are no cycles.
+. A tree with stem:[V] vertices has V edges if there is a cycle.
+
+==== Algorithm Description
+
+Modify DFS algorith to detect a cycle and keep time complexity to stem:[O(V)].
+
+. Start DFS from an unvisited vertex.
+. Mark the current vertex as visited.
+. For each adjacent vertex:
+.. If it's not visited, recursively perform DFS on it.
+.. If it's already visited and is not the parent of the current vertex, a cycle is detected, and the algorithm can stop.
+
+[code,pseudocode]
+----
+DFS-Cycle-Detection(G):
+    for each vertex u in G.V:
+        u.color = WHITE
+        u.parent = NIL
+    cycleFound = FALSE
+    for each vertex u in G.V:
+        if u.color == WHITE:
+            if DFS-VISIT(G, u) == TRUE:
+                cycleFound = TRUE
+                break
+    if cycleFound:
+        print "Cycle detected."
+    else:
+        print "No cycle detected."
+
+DFS-VISIT(G, u):
+    u.color = GRAY
+    for each v in G.Adj[u]:
+        if v.color == WHITE:
+            v.parent = u
+            if DFS-VISIT(G, v) == TRUE:
+                return TRUE
+        elif v != u.parent:
+            // A cycle is detected
+            return TRUE
+    u.color = BLACK
+    return FALSE
+----
+
+=== Answer 3
+
+Modify the Bellman-Ford algorithm so that it sets stem:[v.d] to stem:[-\infty] for
+all vertices stem:[v] for which there is a negative-weight cycle on some
+path from the source to stem:[v].
+
+==== Step 1: Run the Standard Bellman-Ford Algorithm
+
+. Initialize all vertices `v.d` to stem:[+\infty], except for the source vertex `s` which is set to 0.
+. For each vertex `u`, set `u.predecessor` to `NIL`.
+. For stem:[|V| - 1] times, where stem:[|V|] is the number of vertices, relax all edges.
+. Check for negative-weight cycles by relaxing all edges once more. If any edge can be relaxed, it is part of a negative-weight cycle.
+
+==== Step 2: Modify Bellman-Ford for Negative-Weight Cycles Detection
+
+. After detecting a negative-weight cycle, introduce a new vertex stem:[s_0].
+. Add an edge from stem:[s_0] to each vertex stem:[v] that was relaxed in the step that detected the negative-weight cycle. This connects stem:[s_0] to all vertices involved in or reachable via negative-weight cycles.
+. Perform a DFS starting from stem:[s_0] to find all vertices reachable from stem:[s_0]. Each reachable vertex is either part of a negative-weight cycle or can be reached via one.
+
+==== Step 3: Set Distances to stem:[-\infty] for Affected Vertices
+
+. For each vertex `v` reachable in the DFS from stem:[s_0], set `v.d` to stem:[-\infty].
+
+[code,pseudocode]
+----
+Bellman-Ford-Modified(G, w, s):
+    INITIALIZE-SINGLE-SOURCE(G, s)
+    for i = 1 to |G.V| - 1
+        for each edge (u, v) in G.E
+            RELAX(u, v, w)
+    for each edge (u, v) in G.E
+        if v.d > u.d + w(u, v)
+            v.d = -infinity
+    s_0 = new Vertex
+    for each vertex v in G.V
+        if v.d == -infinity
+            add edge (s_0, v) to G.E
+    DFS(G, s_0)
+    for each vertex v in G.V
+        if v.color == BLACK
+            v.d = -infinity
+----
+
+=== Answer 4
+Show how to use the output of the Floyd-Warshall algorithm to detect the
+presence of a negative-weight cycle.
+
+. We can add a loop that iterates over all vertices stem:[v] from stem:[1] to stem:[n]. 
+. For each vertex, it checks if stem:[d_{vv} < 0]. If such a condition is found, it indicates that the graph contains a negative weight cycle. 
+. We then report the presence of a negative cycle and the algorithm can stop.
+. If no negative cycle is detected, the algorithm proceeds to return the final distance matrix stem:[D].
+
+
+* stem:[text(FLOYD-WARSHALL')(W, n)]
+. stem:[D = W]
+. stem:[text(for ) k = 1 text( to ) n]
+.. stem:[text(for ) i = 1 text( to ) n]
+... stem:[text(for ) j = 1 text( to ) n]
+.... stem:[d_{ij} = min{d_{ij}, d_{ik} + d_{kj}}]
+. stem:[text(for ) v = 1 text( to ) n]
+.. stem:[text(if ) d_{vv} < 0 text( then )]
+... stem:[text(Report a negative cycle and stop)]
+. stem:[text(return ) D]
+
+
+=== Answer 5
+
+As it appears on page 657 of the text, the Floyd-Warshall algorithm requires
+stem:[Theta(n^3)] space, since it creates stem:[d_{ij}^{(k)}] for
+stem:[i, j, k = 1, 2, ..., n]. Show that the procedure
+stem:[text(FLOYD-WARSHALL')], which simply drops all the superscripts, is
+correct, and thus only stem:[Theta(n^2)] space is required.
+
+
+When we track each stage with superscripts, our update rule is stem:[d_{ij}^{(k)} = \min(d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{kj}^{(k-1)})]. This tells us we're looking for the shortest way from point stem:[i] to point stem:[j], with the option to go through up to the stem:[k^{th}] point as a middle step.
+
+If we choose not to use superscripts and update distances as we go along, we might face a bit of a puzzle about using the values for stem:[d_{ik}] or stem:[d_{kj}]. Specifically, when figuring out stem:[d_{ij}], we might use these in three possible ways:
+
+\begin{aligned}
+d_{ij}^{(k)} & = \min(d_{ij}^{(k-1)}, d_{ik}^{(k)} + d_{kj}^{(k-1)}), \\
+d_{ij}^{(k)} & = \min(d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{kj}^{(k)}), \\
+d_{ij}^{(k)} & = \min(d_{ij}^{(k-1)}, d_{ik}^{(k)} + d_{kj}^{(k)}),
+\end{aligned}
+
+In each scenario, we're essentially calculating the weight of the lightest path from stem:[i] to stem:[j] that includes any stops between 1 and stem:[k]. When we update the path to stem:[k], it's like saying we're using the best known path to stem:[k] so far. But, it's key to remember that stem:[k] can't be a stopover on the way to itself; that would mean there's a loop, which doesn't fit the idea of the shortest path. This implies that the path to stem:[k] at stage stem:[k] is essentially the same as at stage stem:[k-1]. A similar line of thought shows that stem:[d_{kj}^{(k)} = d_{kj}^{(k-1)}].
+
+Therefore, even if we skip the superscripts and update the distances directly, we're accurately tracking the shortest paths. This approach simplifies our process but doesn't alter the results, allowing us to use less space—from a stem:[Theta(n^3)] requirement down to stem:[Theta(n^2)]—while the computational/complexity time remains the same.
+
+
+=== Answer 6
+
+Suppose that we change line 3 of DAG-SHORTEST-PATHS (from page 617 in the text)
+making the procedure read as follows:
+
+* stem:[text(DAG-SHORTEST-PATHS)(G, w, s)]
+. topologically sort the vertices of stem:[G]
+. stem:[text(INITIALIZE-SINGLE-SOURCE)(G, s)]
+. *for* the first stem:[|V| - 1] vertices, taken in topologically sorted order
+. stem:[text( )] *for* each vertex stem:[v] in stem:[text(G.Adj)[u\]]
+. stem:[text( ) text( ) text(RELAX)(u, v, w)]
+
+Show that the procedure remains correct.
+
+==== Proof
+
+If we let the vertices stem:[V] be topologically sorted such that we have an ordered list of vertices stem:[v_1, v_2, \ldots, v_n]. In a topologically sorted graph, then stem:[v_n] has no children. We can assume that there is no stem:[v_{n+1}] for which stem:[\delta(s, v_{n+1}) \le \delta(s, v_n) + w(v_n,v_{n+1})] needs or could to relax. Therefore, since there is no adjacent nodes we have stem:[G.Adj[u] = 0], and this means that the stem:[text(for)] loop in line 4 will not execute; this also means that the algorithm will have no more edges to relax. Therefore, the algorithm remains correct if only consider the first stem:[V-1] vertices. 

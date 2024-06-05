@@ -1,0 +1,22 @@
+:stem:
+
+= Practice 8-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Prove that a greedy scheduler achieves the following time bound
+stem:[T_P <= {T_1 - T_{oo}} / P + T_{oo}], which is
+slightly stronger than the bound proved in the reading of
+stem:[T_P <= T_1 / P + T_{oo}].
+
+
+== Answers
+
+* \(T_1\) is the total work if the task were executed sequentially.
+* \(T_{\infty}\) is the minimum possible parallel time, or the span of the computation.
+* \(P\) is the number of processors.
+
+By Theorem 26.1, Corollary 26.2, and Corollary 26.3, we can observe that the stronger bound explicitly accounts for the work that cannot be parallelized, represented by \(T_{\infty}\) (the span of the computation). By subtracting \(T_{\infty}\) from \(T_1\) before dividing by \(P\), the formula more accurately reflects the distribution of only the parallelizable workload among the processors. This distinction highlights the recognition that not all parts of \(T_1\) can be sped up through additional processing resources due to inherent sequential dependencies.

@@ -1,0 +1,28 @@
+:stem:
+:imagesdir: images
+
+* Now let's look at the problem of Single-Source Shortest Paths. Think about your
+GPS...how does it determine the shortest route to a destination? One way would
+be to enumerate all the routes but that would be enormous.
+
+* We can use a graph where the vertices represent intersections, edges
+represent connections between the intersections, and edge weights represent
+how long it takes to traverse that road segment.
+
+* For single-source shortest-path, we're looking for the shortest path from a
+single source to all other vertices.
+
+* Shortest path algorithms typically rely on the optimal substructure of a
+shortest path. Intuitive.
+
+* Negative weights
+
+* Cycles
+
+* Bellman-Ford +
+TODO
+image:04.png[title="Figure 22.4"]
+
+* DAG shortest path +
+TODO
+image:05.png[title="Figure 22.5"]

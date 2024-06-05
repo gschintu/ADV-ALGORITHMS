@@ -1,0 +1,25 @@
+:stem:
+
+= Practice 3-2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Give a recursive algorithm stem:[text(MATRIX-CHAIN-MULTIPLY)(A, s, i, j)] that
+actually performs the optimal matrix-chain multiplication, given the sequence of
+matrices stem:[<<A_1, A_2, ..., A_n>>], the stem:[s] table computed by
+stem:[text(MATRIX-CHAIN-ORDER)], and the indices stem:[i] and stem:[j].
+(The initial call is stem:[text(MATRIX-CHAIN-MULTIPLY)(A, s, 1, n)].)
+Assume that the call stem:[text(RECTANGULAR-MATRIX-MULTIPLY)(A, B)] returns the
+product of matrices stem:[A] and stem:[B].
+
+
+== Answers
+
+=== Answer 1
+* stem:[text(MATRIX-CHAIN-MULTIPLY)(A, s, i, j)]
+  ** stem:[text(if ) i = j]
+    *** stem:[text(return ) A_i]
+  ** stem:[text(return MATRIX-CHAIN-MULTIPLY)(A, s, i, s[i, j\]) xx text(MATRIX-CHAIN-MULTIPLY)(A, s, s[i, j\] + 1, j)]

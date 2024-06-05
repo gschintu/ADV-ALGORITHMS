@@ -1,0 +1,434 @@
+:stem:
+
+= Problem Set 3
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Describe the subproblem graph for matrix-chain multiplication with an input
+chain of length stem:[n]. How many vertices does it have? How many edges does
+it have, and which edges are they?
+
+=== Problem 2
+Consider a modification of the rod-cutting problem in which, in addition to a
+price stem:[p_i] for each rod, each cut incurs a fixed cost of stem:[c]. The
+revenue associated with a solution is now the sum of the prices of the pieces
+minus the costs of making the cuts. Give a dynamic-programming algorithm to solve
+this modified problem.
+
+=== Problem 3
+Suppose that the rod-cutting problem of Section 14.1 also had a limit
+stem:[l_i] on the number of pieces of length stem:[i] allowed to be produced,
+for stem:[i = 1, 2, ..., n]. Show that the optimal-substructure property
+described in Section 14.1 no longer holds.
+
+=== Problem 4
+
+==== Setup
+In order to transform a source string of text stem:[x[1:m\]] to a target string
+stem:[y[1:n\]], you can perform various transformation operations. The goal is,
+given stem:[x] and stem:[y], to produce a series of transformations that changes
+stem:[x] to stem:[y]. An array stem:[z] -- assumed to be large enough to hold
+all the characters it needs -- holds the intermediate results. Initially,
+stem:[z] is empty, and at termination, you should have stem:[z[j\] = y[j\]] for
+stem:[j = 1, 2, ..., n]. The procedure for solving this problem maintains
+current indices stem:[i] into stem:[x] and stem:[j] into stem:[z], and the
+operations are allowed to alter stem:[z] and these indices. Initially,
+stem:[i = j = 1]. Every character in stem:[x] must be examined during the
+transformation, which means that at the end of the sequence of transformation
+operations, stem:[i = m + 1].
+
+You may choose from among siz transformation operations, each of which has
+a constant cost that depends on the operation:
+
+*Copy* a character from stem:[x] to stem:[z] by setting stem:[z[j\] = x[i\]]
+and then incrementing both stem:[i] and stem:[j]. This operation examines
+stem:[x[i\]] and has cost stem:[Q_C].
+
+*Replace* a character from stem:[x] by another character stem:[c], by setting
+stem:[z[j\] = c], and then incrementing both stem:[i] and stem:[j]. This
+operation examines stem:[x[i\]] and has cost stem:[Q_R].
+
+*Delete* a character from stem:[x] by incrementing stem:[i] but leaving
+stem:[j] alone. This operation examines stem:[x[i\]] and has cost stem:[Q_D].
+
+*Insert* the character stem:[c] into stem:[z] by setting stem:[z[j\] = c] and
+then incrementing stem:[j], but leaving stem:[i] alone. This operation examines
+no characters of stem:[x] and has cost stem:[Q_I].
+
+*Twiddle* (i.e., exchange) the next two characters by copying them from stem:[x]
+to stem:[z] but in the opposite order: setting stem:[z[j\] = x[i + 1\]] and
+stem:[z[j + 1\] = x[i\]], and then setting stem:[i = i + 2] and
+stem:[j = j + 2]. This operation examines stem:[x[i\]] and stem:[x[i + 1\]] and
+has cost stem:[Q_T].
+
+*Kill* the remainder of stem:[x] by setting stem:[i = m + 1]. This operation
+examines all characters in stem:[x] that have not yet been examined. This
+operation, if performed, must be the final operation. It has cost stem:[Q_K].
+
+Assume that stem:[Q_C < Q_D + Q_I] and stem:[Q_R < Q_D + Q_I], since otherwise,
+the copy and replace operations would not be used. The cost of a given
+sequence of transformation operations is the sum of the costs of the
+individual operations in the sequence.
+
+The following example gives one way to transform the source string
+`algorithm` to the target string `altruistic`. Several other sequences of
+transformation operations can transform `algorithm` to `altruistic`. For this
+example, the cost of the transformation is
+stem:[3Q_C + Q_R + Q_D + 4Q_I + Q_T + Q_K].
+
+[frame=none, grid=none, autowidth, stripes=even, header]
+|===
+| Operation | stem:[x] | stem:[z]
+
+| initial strings | `##a##lgorithm` | `##_##`
+| copy | `a##l##gorithm` | `a##_##`
+| copy | `al##g##orithm` | `al##_##`
+| replace by t | `alg##o##rithm` | `alt##_##`
+| delete | `algo##r##ithm` | `alt##_##`
+| copy | `algor##i##thm` | `altr##_##`
+| insert u | `algor##i##thm` | `altru##_##`
+| insert i | `algor##i##thm` | `altrui##_##`
+| insert s | `algor##i##thm` | `altruis##_##`
+| twiddle | `algorit##h##m` | `altruisti##_##`
+| insert c | `algorit##h##m` | `altruistic##_##`
+| kill | `algorithm##_##` | `altruistic##_##`
+|===
+
+==== Problem
+Given two sequences stem:[x[1:m\]] and stem:[y[1:n\]] and the costs of the
+transformation operations, the *edit distance* from stem:[x] to stem:[y] is the
+cost of the least expensive operation sequence that transforms stem:[x] to
+stem:[y]. Describe a dynamic-programming algorithm that finds the edit
+distance from stem:[x[1:m\]] to stem:[y[1:n\]] and prints an optimal operation
+sequence.
+
+In doing this, you are going to be arguing that this problem exhibits
+optimal substructure (step 1), providing a recurive solution (step 2), giving
+pseudocode for computing the edit distance (step 3), and giving pseudocode for
+constructing the optimal operation sequence based on the edit distance (step 4).
+
+Analyze the running time and space requirements of your algorithm.
+
+=== Problem 5
+Suppose that you are given a color picture consisting of an stem:[m ** n] array
+stem:[A[1:m, 1:n\]] of pixels, where each pixel speciûes a triple of red,
+green, and blue (RGB) intensities. You want to compress this picture slightly,
+by removing one pixel from each of the stem:[m] rows, so that the whole picture
+becomes one pixel narrower. To avoid incongruous visual effects, however, the
+pixels removed in two adjacent rows must lie in either the same column or
+adjacent columns. In this way, the pixels removed form a "seam" from the top
+row to the bottom row, where successive pixels in the seam are adjacent
+vertically or diagonally.
+
+. Show that the number of such possible seams grows at least exponentially in
+stem:[m], assuming that stem:[n > 1].
+. Suppose now that along with each pixel stem:[A[i, j\]], you are given a
+real-valued disruption measure stem:[d[i, j\]], indicating how disruptive it
+would be to remove pixel stem:[A[i, j\]]. Intuitively, the lower a pixel’s
+disruption measure, the more similar the pixel is to its neighbors. Define the
+disruption measure of a seam as the sum of the disruption measures of its
+pixels. Give an algorithm to find a seam with the lowest disruption measure.
+Analyze the running time and space requirements of your algorithm.
+
+== Answers
+
+=== Answer 1
+
+Describe the subproblem graph for matrix-chain multiplication with an input
+chain of length stem:[n]. How many vertices does it have? How many edges does
+it have, and which edges are they?
+
+We will use the dynamic-programming method:
+
+==== Step 1 - Approach
+The vertices stem:[A] are the ordered pairs of its rows and columns stem:[i,j] respectively. Thus, stem:[A_{i,j}], where  stem:[i \leq j].
+if stem:[i = j], then stem:[A_{i,j}] is a single matrix, and if stem:[i < j], then stem:[A_{i,j}] is a chain of matrices.
+
+So, let's approach the case when stem:[i<j]:
+
+==== Step 2 - Recursive Solution
+The recursive solution is to define the cost of an optimal solution recursively in terms of the optimal solutions to subproblems.
+
+In this case, if stem:[i<j], for each stem:[k] such that stem:[i \leq k < j], each vertex has 2 edges stem:[(A_{ij}, A_{ik})] and stem:[(A_{ij}, A_{k+1,j})].
+
+==== Step 3-4 - Pseudocode & Optimal solution
+
+Number of Vertices: stem:[\sum_{i=1}^{n} \sum_{j=i}^{n} = n(n+1)/2]
+
+Number of edges: stem:[\sum_{i=1}^{n-1} \sum_{j=i+1}^{n} 2(j-i)= (n(n^2-1))/3]
+
+=== Answer 2
+
+Consider a modification of the rod-cutting problem in which, in addition to a
+price stem:[p_i] for each rod, each cut incurs a fixed cost of stem:[c]. The
+revenue associated with a solution is now the sum of the prices of the pieces
+minus the costs of making the cuts. Give a dynamic-programming algorithm to solve
+this modified problem.
+
+[latexmath]
+++++
+\text{1. Initialization:} \\
+\text{ Initialize an array } r[0..n] \text{ with } r[0] = 0. \\
+\text{2. Bottom-Up Calculation:} \\
+\text{ For each length } j = 1 \text{ to } n: \\
+\text{ Set } r[j] = - \infty \text{(or a very small number) to ensure any valid cut improves upon this initial value.} \\
+\text{ For each possible cut }  i = 1 \text{ to } j: \\
+\text{ Calculate the revenue for this cut as }  q = p[i] + r[j-i] - c ( \text{ if } j > i, \text{ implying a cut is made } ) \text{ or } q = p[i] \text{ if } j = i \text{ (no cut is made). } \\
+\text{ Update }  r[j] = \max(r[j], q) \text{ to ensure }  r[j] \text{ holds the maximum revenue for a rod of length  } j. \\
+
+
+\text{3. Return Value:} \\
+\text{ The value } r[n] \text{ will contain the maximum revenue obtainable for a rod of length } n.
+++++
+
+[source,pseudocode]
+----
+Procedure MaxRevenueWithFixedCost (p[1..n], n, c)
+
+    // p[1..n] = Array of prices for each rod length
+    // n = Length of the rod
+    // c = Fixed cost for each cut
+
+    Initialize r[0..n] = Array()
+    Set r[0] = 0
+
+    For j from 1 to n do
+    Set max_val = 0
+    For i from 1 to j do
+            If j > i then
+                Set cost = c  // Cut cost applies
+            Else
+                Set cost = 0  // No cut cost if the entire rod is not cut
+            Set q = p[i] + r[j - i] - cost // Determine the revenue for this cut and deduct the cost
+            If q > max_val then
+                Set max_val = q
+            Set r[j] = max_val
+
+    Return r[n]  // Maximum revenue for rod of length n with fixed cost c
+----
+
+
+=== Answer 3
+
+Suppose that the rod-cutting problem of Section 14.1 also had a limit
+stem:[l_i] on the number of pieces of length stem:[i] allowed to be produced,
+for stem:[i = 1, 2, ..., n]. Show that the optimal-substructure property
+described in Section 14.1 no longer holds.
+
+
+the decision to make a specific cut affects and is affected by the availability of cuts for pieces of the same length elsewhere in the rod. This interdependency violates the optimal-substructure property as initially described because the optimality of cutting a rod into pieces of lengths stem:[i] and stem:[n−i] can no longer be considered independently of each other or of the cuts made on the rest of the rod.
+
+\[
+\begin{align*}
+&\text{For example, consider a rod of length } n = 4. \text{ If } l_1 = 1 \text{ and } l_2 = 1,\\
+&\text{with } p_1 \text{ and } p_2 \text{ being the prices for lengths } 1 \text{ and } 2 \text{ respectively,}\\
+&\text{the optimal solution without considering the limitations might be to cut the rod into}\\
+&\text{two pieces of length } 2, \text{ if } 2p_2 > p_1 + p_3 \text{ assuming } p_3 \text{ is the price for length } 3.\\
+&\text{However, if the limitation } l_2 = 1 \text{ is applied, this solution is no longer feasible,}\\
+&\text{and we might have to opt for a piece of length } 3 \text{ and a piece of length } 1,\\
+&\text{if that yields the highest revenue within the constraints.}\\
+&\text{This scenario illustrates that the introduction of } l_i \text{ disrupts the optimal substructure property}\\
+&\text{because the optimal solution for the entire rod no longer depends solely on}\\
+&\text{the optimal solutions to its subproblems.}
+\end{align*}
+\]
+
+
+
+=== Answer 4
+
+==== Edit Distance Problem Description
+
+The edit distance problem involves finding the minimum cost to transform a source string `x[1:m]` into a target string `y[1:n]` using a set of operations, each with a specified cost. This problem exhibits optimal substructure and can be solved using a recursive approach.
+
+===== Optimal Substructure
+
+The optimal substructure property states that the solution to a problem can be constructed from the optimal solutions of its subproblems. For the edit distance problem, this means that the minimum cost to transform `x[1:i]` into `y[1:j]` relies on the minimum costs of transforming smaller prefixes of `x` and `y`.
+
+\[
+\text{Let } D[i, j] \text{ be the minimum cost of transforming } x[1:i] \text{ into } y[1:j].
+\]
+
+The optimal solution for transforming `x[1:m]` into `y[1:n]` can be built by considering the optimal solutions for transforming `x[1:i]` into `y[1:j]` for all `i` and `j`.
+
+===== Recursive Solution
+
+The recursive formula for `D[i, j]` is based on the last operation used to transform `x[1:i]` into `y[1:j]`. The operations are as follows:
+
+- stem:[Q_C] - *Copy* a character.
+- stem:[Q_R] - *Replace* a character.
+- stem:[Q_D] - *Delete* a character from `x`.
+- stem:[Q_I] - *Insert* a character into `y`.
+- stem:[Q_T] - *Twiddle* the next two characters.
+- stem:[Q_K] - *Kill* the remainder of `x`.
+
+
+\[
+D[i, j] = \begin{cases}
+0 & \text{if } i = 0 \text{ and } j = 0 \\
+j \times Q_I & \text{if } i = 0 \\
+i \times Q_D & \text{if } j = 0 \\
+\min \begin{cases}
+D[i-1, j-1] + Q_C & \text{if } x[i] = y[j] \\
+D[i-1, j-1] + Q_R & \text{if } x[i] \neq y[j] \\
+D[i-1, j] + Q_D \\
+D[i, j-1] + Q_I \\
+D[i-2, j-2] + Q_T & \text{if applicable} \\
+\min_{k < i}(D[k, j] + Q_K) & \text{if } i = m
+\end{cases}
+\end{cases}
+\]
+
+
+===== Code implementation in Python for Computing Edit Distance
+
+
+[source,pseudocode]
+----
+
+def compute_edit_distance_and_choices(x, y, Q_C, Q_R, Q_D, Q_I, Q_T, Q_K):
+    m, n = len(x), len(y)
+    D = [[0 for _ in range(n+1)] for _ in range(m+1)]
+    Choice = [[None for _ in range(n+1)] for _ in range(m+1)]
+    
+    for i in range(1, m+1):
+        D[i][0] = i * Q_D
+        Choice[i][0] = "Delete"
+    for j in range(1, n+1):
+        D[0][j] = j * Q_I
+        Choice[0][j] = "Insert"
+        
+    for i in range(1, m+1):
+        for j in range(1, n+1):
+            if x[i-1] == y[j-1]:
+                D[i][j] = D[i-1][j-1] + Q_C
+                Choice[i][j] = "Copy"
+            else:
+                D[i][j] = D[i-1][j-1] + Q_R
+                Choice[i][j] = "Replace"
+                
+            if D[i-1][j] + Q_D < D[i][j]:
+                D[i][j] = D[i-1][j] + Q_D
+                Choice[i][j] = "Delete"
+                
+            if D[i][j-1] + Q_I < D[i][j]:
+                D[i][j] = D[i][j-1] + Q_I
+                Choice[i][j] = "Insert"
+                
+            if i > 1 and j > 1 and x[i-1] == y[j-2] and x[i-2] == y[j-1] and D[i-2][j-2] + Q_T < D[i][j]:
+                D[i][j] = D[i-2][j-2] + Q_T
+                Choice[i][j] = "Twiddle"
+    
+    return D, Choice
+
+def construct_optimal_sequence(Choice, m, n):
+    sequence = []
+    i, j = m, n
+    while i > 0 or j > 0:
+        operation = Choice[i][j]
+        if operation is not None:  # Add operation to the sequence if it's defined
+            sequence.append(operation)
+        if operation == "Copy" or operation == "Replace":
+            i -= 1
+            j -= 1
+        elif operation == "Delete":
+            i -= 1
+        elif operation == "Insert":
+            j -= 1
+        elif operation == "Twiddle":
+            i -= 2
+            j -= 2
+        # No explicit "Kill" operation handling as it's considered a final action
+    sequence.reverse()  # Reverse to get the correct order of operations
+    return sequence
+
+
+# Define the costs for each operation
+Q_C = 1
+Q_R = 2
+Q_D = 3
+Q_I = 3
+Q_T = 2
+Q_K = 5
+
+x = "algorithm"
+y = "altruistic"
+
+D, Choice = compute_edit_distance_and_choices(x, y, Q_C, Q_R, Q_D, Q_I, Q_T, Q_K)
+sequence = construct_optimal_sequence(Choice, len(x), len(y))
+print("Optimal operation sequence:", sequence)
+
+----
+
+===== Cost and Space Complexity Analysis
+
+The cost of operations is constant, so the time complexity of the `compute_edit_distance_and_choices` function is `O(mn)`, where `m` and `n` are the lengths of the input strings `x` and `y`. The space complexity is also `O(mn)` due to the `D` and `Choice` arrays.
+
+=== Answer 5
+
+==== Part 1: Growth of Possible Seams
+To understand the growth of possible seams, consider the following:
+
+* For a pixel in the interior columns (stem:[2] to stem:[n-1]), there are up to 3 choices for the next pixel. However, even at the edges of the image where fewer choices might seem to limit the growth, the following logic holds:
+* For a pixel in the stem:[1^{st}] or stem:[n^{th}] column, there are 2 choices for the next pixel. 
+
+Given these considerations, every row presents a scenario where each pixel chosen could lead to at least two paths moving forward (either to the pixel directly below or diagonally adjacent). This minimum of two choices per step ensures that, at the very least, the number of different ways (or "seams") to traverse from the top to the bottom of the image grows exponentially with the height of the image, stem:[m]. 
+
+Even in the most restrictive case, where each row contributes only two choices for how to proceed to the next row, the total number of possible seams doubles with each additional row. Therefore, starting with a single pixel on the top row, the number of possible paths or "seams" through the image to the bottom row grows as stem:[2^m], assuming that stem:[n > 1].
+
+==== Part 2: Algorithm for Finding Seam with Lowest Disruption Measure
+
+===== Step 1: Define Subproblems
+
+For each row stem:[i] and each column stem:[j] (where stem:[j \leq n]), consider the minimum disruption measure of a seam that starts from the first row and ends at row stem:[i] at the pixel stem:[A[i,j\]]. Let stem:[B[i,j\]] denote this quantity.
+
+===== Step 2: Base Case and Recurrence Relation
+
+- *Base Case:* For stem:[i = 1], we have stem:[B[1,j\]] stem:[=] stem:[d[1,j\]] because the disruption measure for the first row is simply the disruption measure of each pixel.
+
+- *Recurrence Relation:* For stem:[i > 1],
+
+  - If stem:[2 <= j <= n-1], then:
+    
+\[
+B[i,j] = min(B[i-1,j-1], B[i-1,j], B[i-1,j+1]) + d[i,j]
+\]
+
+  - For the edge cases:
+
+\[
+B[i,1] = min(B[i-1,1], B[i-1,2]) + d[i,1]
+\]
+    
+\[
+B[i,n] = min(B[i-1,n], B[i-1,n-1]) + d[i,n]
+\]
+
+===== Step 3: Computing B
+
+The algorithm to fill the array stem:[B] can be implemented as follows in Python:
+
+[source,python]
+----
+B = [[0 for j in range(n)] for i in range(m)]  # Initialize B
+for j in range(1, n+1):
+    B[0][j-1] = d[0][j-1]  # Base case
+for i in range(1, m):
+    # Edge cases
+    B[i][0] = min(B[i-1][0], B[i-1][1]) + d[i][0]
+    B[i][n-1] = min(B[i-1][n-1], B[i-1][n-2]) + d[i][n-1]
+    for j in range(1, n-1):
+        B[i][j] = min(B[i-1][j-1], B[i-1][j], B[i-1][j+1]) + d[i][j]
+----
+
+===== Step 4: Trace Back to Find the Seam of Minimum Disruption
+
+To use stem:[B] to compute a seam of minimum disruption, find the smallest value in stem:[B[m-1,j]] to identify the end pixel of the seam on the last row. Then, trace the computation back to find the seam's pixels on previous rows.
+
+===== Analysis
+
+- *Space Complexity:* stem:[O(mn)] because it requires an array stem:[B] of size stem:[m * n].
+- *Time Complexity:* stem:[O(mn)] for computing stem:[B], as each operation takes constant time. Constructing the seam in Step 4 also takes stem:[O(mn)], resulting in overall stem:[O(mn)] time complexity.

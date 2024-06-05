@@ -1,0 +1,19 @@
+:stem:
+
+= Practice 6-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Show how to find a maximum flow in a flow network stem:[G = (V, E)] by a
+sequence of at most stem:[|E|] augmenting paths.
+
+==== Hint
+Determine the paths _after_ finding the maximum flow.
+
+
+== Answers
+
+=== Answer 1

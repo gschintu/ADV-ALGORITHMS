@@ -1,0 +1,41 @@
+:stem:
+
+= Practice 9-2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Rewrite the linear program for maximum flow (from Chapter 29.2) so that it
+uses only stem:[O(V + E)] constraints.
+
+
+== Answers
+
+=== Answer 1
+So originally we have
+
+maximize stem:[sum_{v in V} f_{sv} - sum_{v in V} f_{vs}] +
+subject to +
+stem:[" " f_{uv} <= c(u, v)] for each stem:[u, v in V] +
+stem:[" " sum_{v in V} f_{vu} = sum_{v in V} f_{uv}]
+for each stem:[u in V - {s, t}] +
+stem:[" " f_{uv} >= 0] for each stem:[u, v in V]
+
+The book already shows that we have stem:[2|V|^2 + |V| - 2] constraints.
+We have stem:[|V|^2] coming from the first set of constraints and another
+stem:[|V|^2] coming from the third set of constraints. If we can convert
+those to stem:[|E|] then we would have stem:[2|E| + |V| - 2 = O(|E| + |V|)].
+
+We can change how we index the first and third set of contraints to be edge
+based. Not every vertex pair has an edge with capacity so this will eliminate
+contraints that do not affect the outcome of the answer and give us stem:[|E|]
+constraints rather than stem:[|V|^2] constraints. This gives us:
+
+maximize stem:[sum_{v in V} f_{sv} - sum_{v in V} f_{vs}] +
+subject to +
+stem:[" " f_{uv} <= c(u, v)] for each edge stem:[(u, v) in E] +
+stem:[" " sum_{v in V} f_{vu} = sum_{v in V} f_{uv}]
+for each stem:[u in V - {s, t}] +
+stem:[" " f_{uv} >= 0] for each edge stem:[(u, v) in E]

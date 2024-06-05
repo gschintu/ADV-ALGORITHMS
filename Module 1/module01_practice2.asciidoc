@@ -1,0 +1,42 @@
+:stem:
+
+= Practice 1-2
+Author: Giuseppe Schintu <gschintu@utk.edu>
+:toc:
+
+== Problem 1
+Work problem 2.1-2 on pages 24-25. ("Consider the procedure SUM-ARRAY...")
+
+== Problem 1 Answer
+
+A *loop invariant* is crucial for proving the correctness of loops within algorithms. It must hold true at the following stages:
+
+- *Initialization:* Before the loop starts
+- *Maintenance:* After each iteration of the loop
+- *Termination:* When the loop concludes
+
+== SUM-ARRAY Procedure
+
+Consider a pseudocode representation of the SUM-ARRAY procedure:
+
+[source,plaintext]
+----
+SUM-ARRAY(A):
+    sum = 0
+    for i = 1 to n:
+        sum = sum + A[i]
+    return sum
+----
+
+=== Initialization
+
+At the start, `sum` is set to 0. This aligns with our loop invariant: "Before the start of each iteration, `sum` contains the sum of the first `i-1` elements of `A`." Since no iterations have occurred, `sum` accurately represents the sum of zero elements.
+
+=== Maintenance
+
+If the invariant holds true before an iteration, it should continue to do so afterwards. By adding `A[i]` to `sum`, we now have the sum of the first `i` elements. Thus, the invariant is maintained.
+
+=== Termination
+
+The loop concludes when `i > n`, indicating that `sum` now holds the sum of all `n` elements. The loop invariant at this point confirms the SUM-ARRAY procedure's correctness in computing the array's sum.
+

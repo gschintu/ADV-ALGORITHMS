@@ -1,0 +1,40 @@
+:stem:
+
+= Practice 9-1
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+
+==== Setup
+Sometimes, in a linear program, we need to convert constraints from one form to
+another.
+
+==== Part A
+Show how to convert an equality constraint into an equivalent set of
+inequalities. That is, given a constraint
+stem:[Sigma_{j=1}^{n} a_{ij}x_j = b_i], give a set of inequalities that will
+be satisfied if an only if stem:[Sigma_{j=1}^{n} a_{ij}x_j = b_i].
+
+==== Part B
+Show how to convert an inequality constraint
+stem:[Sigma_{j=1}^{n} a_{ij}x_j <= b_i] into an equality constraint and a
+nonnegativity constraint. You will need to introduce an additional variable
+stem:[s], and use the constraint that stem:[s >= 0].
+
+
+== Answers
+
+=== Answer 1A
+
+The set of inequalities that will be satisfied if and only if, we can derive two inequalities and bound them with the equality constraint. The two inequalities are:
+stem:[Sigma_{j=1}^{n} a_{ij}x_j = b_i] is
+stem:[a_{ij}x_j <= b_i] and stem:[a_{ij}x_j >= b_i].
+
+
+=== Answer 1B
+
+To convert the inequality constraint into an equality constraint and a nonnegativity constraint, we can introduce a new variable stem:[s] and use the constraint that stem:[s >= 0]. The new constraints are:
+stem:[Sigma_{j=1}^{n} a_{ij}x_j + s = b_i] and stem:[s >= 0].

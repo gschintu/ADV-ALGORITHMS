@@ -1,0 +1,16 @@
+:stem:
+
+= Practice 6-2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Show that if an edge stem:[(u, v)] is contained in some minimum spanning tree,
+then it is a light edge corssing some cut of the graph.
+
+
+== Answers
+
+=== Answer 1

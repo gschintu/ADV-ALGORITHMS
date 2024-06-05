@@ -1,0 +1,16 @@
+:stem:
+
+= Practice 5-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Prove that a non-full binary tree cannot correspond to an optimal prefix-free
+code.
+
+
+== Answers
+
+=== Answer 1

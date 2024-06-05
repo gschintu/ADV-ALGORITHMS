@@ -1,0 +1,289 @@
+:stem:
+
+= Problem Set 9
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+
+==== Setup
+Consider the following linear program.
+
+* minimize stem:[x_1 + x_2]
+* subject to stem:[sx_1 + tx_2 >= 1] +
+  stem:[x_1 >= 0] +
+  stem:[x_2] is unconstrained
+
+==== Part A
+Find conditions on stem:[s] and stem:[t] to make this infeasible.
+
+==== Part B
+Find conditions on stem:[s] and stem:[t] to make this feasible.
+
+==== Part C
+Find conditions on stem:[s] and stem:[t] to make this have
+a unique optimal solution.
+
+==== Part D
+Find conditions on stem:[s] and stem:[t] to make this have
+multiple optimal solution.
+
+==== Part E
+Find conditions on stem:[s] and stem:[t] to make this unbounded.
+
+=== Problem 2
+
+==== Setup
+An *integer linear-programming problem* is a linear-programming problem with the
+additional constraint that the variables stem:[x] must take on integer values.
+Turns out there is no known polynomial-time algorithm for this problem.
+
+==== Part A
+Show that weak duality (Lemma 29.1 from the reading) holds for an integer
+linear program.
+
+==== Part B
+Show that duality (Theorem 29.4 from the reading) does not always hold for an
+integer linear program.
+
+==== Part C
+Given a primal linear program in standard form, let stem:[P] be the optimal
+objective value for the primal linear program, stem:[D] be the optimal
+objective value for its dual, stem:[IP] be the optimal objective value for the
+integer version of the primal (that is, the primal with the added constraint
+that the variables take on integer values), and stem:[ID] be the optimal
+objective value for the integer version of the dual. Assuming that both the
+primal integer program and the dual integer program are feasible and bounded,
+show that stem:[IP <= P = D <= ID].
+
+=== Problem 3
+
+==== Setup
+*Complementary slackness* describes a relationship between the values of primal
+variables and dual constraints and between the values of dual variables and
+primal constraints. Let stem:[bar x] be a feasible solution to the following
+primal linear program
+
+* maximize stem:[sum_{j=1}^{n} c_j x_j]
+* subject to +
+  stem:[sum_{j=1}^{n} a_{ij} x_j <= b_i text( for ) i = 1, 2, ..., m] +
+  stem:[x_j >= 0 text( for ) j = 1, 2, ..., n]
+
+and let stem:[bar y] be a feasible solution to its dual linear program
+
+* minimize stem:[sum_{i=1}^{m} b_i y_i]
+* subject to +
+  stem:[sum_{i=1}^{m} a_{ij} y_i >= c_j text( for ) j = 1, 2, ..., n] +
+  stem:[y_i >= 0 text( for ) i = 1, 2, ..., m]
+
+Complementary slackness states that the following conditions are necessary and
+sufficient for stem:[bar x] and stem:[bar y] to be optimal:
+
+stem:[sum_{i=1}^{m} a_{ij} bar y_i = c_j text( or ) bar x_j = 0 text( for )
+j = 1, 2, ..., n]
+
+and
+
+stem:[sum_{j=1}^{n} a_{ij} bar x_j = b_i text( or ) bar y_i = 0 text( for )
+i = 1, 2, ..., m]
+
+==== Part A
+Verify that complementary slackness holds for the following linear program
+
+* maximize stem:[3x_1 + x_2 + 4x_3]
+* subject to +
+  stem:[x_1 + x_2 + 3x_3 <= 30] +
+  stem:[2x_1 + 2x_2 + 5x_3 <= 24] +
+  stem:[4x_1 + x_2 + 2x_3 <= 36] +
+  stem:[x_1, x_2, x_3 >= 0]
+
+==== Part B
+Prove that complementary slackness holds for any primal libear program and its
+corresponding dual.
+
+==== Part C
+Prove that a feasible solution stem:[bar x] to the primal linear program given
+in the setup is optimal if and only if there exist values
+stem:[bar y = (bar y_1, bar y_2, ..., bar y_m)] such that
+
+. stem:[bar y] is a feasible solution to the dual linear program given in the
+  setup.
+. stem:[Sigma_{i=1}^{m} a_{ij} bar y_i = c_j] for all stem:[j] such that
+  stem:[bar x_j > 0]
+. stem:[bar y_i = 0] for all stem:[i] such that
+  stem:[Sigma_{j=1}^{n} a_{ij} bar x_j < b_i]
+
+=== Problem 4
+One of the most important problems in the field of statistics is the
+~linear regression problem~. Roughly speaking, this problem involves fitting a
+straight line to statistical data represented by points
+stem:[(x_1, y_1), (x_2, y_2), ..., (x_n, y_n)] on a graph. If we denote the line
+by stem:[y = a + bx], the objective is to choose the constants stem:[a] and
+stem:[b] to provide the best fit according to some criterion. The criterion
+usually used is the method of least squares, but there are other interesting
+criteria where linear programming can be used to solve for the optimal values
+stem:[a] and stem:[b]. Formulate a linear programming model for this problem
+under the following criterion:
+
+Minimize the sum of the absolute deviations of the data from the line; that is,
+
+minimize stem:[sum_{i=1}^{n} |y_i - (a + bx_i)|]
+
+
+== Answers
+
+=== Answer 1A
+
+stem:[s = 0] and stem:[t = 0]
+
+=== Answer 1B
+
+stem:[s ne 0] or stem:[t ne 0]
+
+=== Answer 1C
+
+stem:[s ne 0], stem:[t ne 0], and stem:[s ne -t]
+
+=== Answer 1D
+
+Looking at the feasible region, we see that the optimal solution is unbounded in the direction of decreaing stem:[x_1 + x_2]. Also, if the line stem:[sx_1 + tx_2 = 1] is parallel to surrounding stem:[x_1 + x_2]. Therefore, when stem:[s = -t], we can see multiple optimal solutions.
+
+=== Answer 1E
+
+The problem is unbounded if, along some feasible direction, the objective function can be made indefinitely small. For the objective function stem:[x_1 + x_2] to be unbounded, there must be some feasible direction along which increasing stem:[x_1] or stem:[x_2] does not increase the objective value proportionately. Specifically, if stem:[t] is less than zero, it allows stem:[x_2] to become increasingly negative while still satisfying the constraint stem:[s x_1 + t x_2 >= 1] and reducing stem:[x_1 + x_2]. Thus, the condition for unboundedness is:
+
+stem:[t < 0]
+
+This condition allows the variable stem:[x_2] to decrease indefinitely while still maintaining feasibility of the constraint stem:[s x_1 + t x_2 >= 1].
+
+=== Answer 2A
+
+According to Lemma 29.1 proof Corollary 29.2, "the objective value of a feasible solution to the primal cannot exceed that of a feasible solution to the dual. The primal linear program isa maximization problem and the dual is a minimization problem. Thus, if feasible solutions stem:[bar x] and stem:[bar y] have the same objective value, neither can be improved."
+
+In this particular case there is no further constraint on the integer values of the variables, so the integer linear program is equivalent to the linear program. Therefore, the weak duality holds for an integer linear program.
+
+=== Answer 2B
+
+Let's consider the following example:
+
+Primal:
+
+* maximize stem:[x_1 + x_2]
+* subject to : +
+stem:[x_1 + 2x_2 <= 2] +
+stem:[x_1, x_2 >= 0] +
+stem:[x_1, x_2] are integers +
+
+Dual:
+
+* minimize stem:[2y_1 + 2y_2]
+* subject to : +
+stem:[2y_1 + y_2 >= 1] +
+stem:[y_1 + 2y_2 >= 1] +
+stem:[y_1, y_2 >= 0]
+
+
+The optimal solution to the primal is stem:[x_1 = 1, x_2 = 0] with an objective value of 1. The optimal solution to the dual is stem:[y_1 = 1, y_2 = 0] with an objective value of 2. Therefore, the duality does not hold for an integer linear program.
+
+
+=== Answer 2C
+
+If we look at the first inequality, stem:[IP <= P] we can obtain a subset of feasible solutions if we add the restriction that the solution must be an integer. This is because to get stem:[IP] we are taking the maximum of the primal (restriction on integers) feasible solutions, and to get stem:[P] we are taking the maximum of the primal(no restriction on integers) feasible solutions as well. Since the integer solutions are a subset of the feasible solutions, stem:[IP <= P]. The same logic applies to the other inequalities, however, for stem:[D] and stem:[ID] we are taking the minimums. Therefore, stem:[IP <= P = D <= ID]. 
+
+=== Answer 3A
+
+The solutions provided are:
+
+Primal Solution: stem:[(x_1, x_2, x_3) = (8, 4, 0)]
+
+Dual Solution: stem:[(y_1, y_2, y_3) = (0, 1/6, 2/3)]
+
+Check Complementary Slackness Conditions:
+
+For the primal constraint stem:[x_1 + x_2 + 3x_3 leq 30]:
+
+stem:[8 + 4 + 0 = 12], slack exists, so stem:[y_1 = 0] (satisfied).
+
+For the primal constraint stem:[2x_1 + 2x_2 + 5x_3 leq 24]:
+
+stem:[2 * 8 + 2 * 4 + 5 * 0 = 24], slack is zero, so stem:[y_2] should be non-zero (satisfied as stem:[y_2 = 1/6]).
+
+For the primal constraint stem:[4x_1 + x_2 + 2x_3 leq 36]:
+
+stem:[4 * 8 + 4 + 2 * 0 = 36], slack is zero, so stem:[y_3] should be non-zero (satisfied as stem:[y_3 = 2/3]).
+
+Check Dual Constraints:
+
+stem:[0 * 1 + 1/6 * 2 + 2/3 * 4 = 3], thus stem:[x_1] can be non-zero (satisfied).
+
+stem:[0 * 1 + 1/6 * 2 + 2/3 * 1 = 1], thus stem:[x_2] can be non-zero (satisfied).
+
+stem:[0 * 3 + 1/6 * 5 + 2/3 * 2 = 2 < 4], thus stem:[x_3 = 0] (satisfied).
+
+
+=== Answer 3B
+
+By Lemma 29.1 and Corollary 29.2, assuming complementary slackness holds, we can equate the objective values of the primal and dual solutions by the following derivation:
+
+stem:[sum_{j=1}^{n} c_j x_j = sum_{j=1}^{n} sum_{i=1}^{m} a_{ij} y_i x_j]
+
+stem:[= sum_{i=1}^{m} sum_{j=1}^{n} a_{ij} x_j y_i]
+
+stem:[= sum_{i=1}^{m} b_i y_i]
+
+This expression links the primal and dual formulations under the assumption that either the dual constraints are tight when primal variables are positive, or the primal constraints are tight when dual variables are positive. For the sake of proving complementary slackness, if we assume that stem:[x_j = 0], then the contribution of the term stem:[c_j x_j] will be zero. Similarly, if we assume that stem:[y_i = 0], then the contribution of the term stem:[b_i y_i] will be zero. This shows that the objective values of the primal and dual are equal under complementary slackness.
+
+
+Now, assume there exists stem:[j] such that stem:[x_j != 0] and stem:[sum_{i=1}^{m} a_{ij} y_i > c_j], or there exists stem:[i] such that stem:[y_i != 0] and stem:[sum_{j=1}^{n} a_{ij} x_j < b_i]. In either scenario:
+
+For the first case:
+
+stem:[sum_{j=1}^{n} c_j x_j < sum_{j=1}^{n} sum_{i=1}^{m} a_{ij} y_i x_j]
+
+stem:[= sum_{i=1}^{m} sum_{j=1}^{n} a_{ij} x_j y_i]
+
+stem:[= sum_{i=1}^{m} b_i y_i]
+
+This results in the primal objective being less than the dual, a contradiction since for linear programs under feasibility and boundedness, the primal and dual objectives should match at optimality.
+The same argument applies symmetrically for the second case, showing a contradiction, thereby confirming that optimality implies complementary slackness must hold.
+
+=== Answer 3C
+
+From Answer 3B, we know that if stem:[bar x] is optimal, then there exists a feasible solution stem:[bar y] such that complementary slackness holds. Also, if stem:[x] is optimal, then the dual linear program must have an optimal solution stem:[y] as well, according to Corollary 29.2.
+
+=== Answer 4
+
+
+stem:[a] and stem:[b] are the coefficients of the line.
+
+stem:[u_i] are auxiliary variables representing the absolute deviations for each data point stem:[i], such that stem:[u_i geq |y_i - (a + bx_i)|].
+
+==== Objective Function
+
+Minimize the total absolute deviations:
+
+stem:[sum_{i=1}^{n} u_i]
+
+==== Constraints
+
+For each data point stem:[i], enforce that stem:[u_i] is at least as large as both the positive and negative deviations from the fitted line:
+
+[stem]
+++++
+u_i geq y_i - (a + bx_i) text( for ) i = 1, 2, ..., n
+++++
+
+[stem]
+++++
+u_i geq (a + bx_i) - y_i text( for ) i = 1, 2, ..., n
+++++
+
+Also, ensure that the deviations are non-negative:
+
+[stem]
+++++
+u_i geq 0 text( for ) i = 1, 2, ..., n
+++++
+

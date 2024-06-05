@@ -1,0 +1,62 @@
+:stem:
+
+= Practice 7-3
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Use the potential method to determine the amortized cost per operation for a
+sequence of stem:[n] operations on a data structure in which the stem:[i]th
+operation costs stem:[i] if stem:[i] is an exact power of 2, and 1 otherwise.
+
+
+== Answers
+
+=== Answer 1
+
+If we let stem:[c_i] be the cost of the stem:[i^{th}] operation, then we have 2 conditions:
+
+* stem:[c_i = i] if stem:[i] is a power of 2
+* stem:[c_i = 1] otherwise
+
+The potential function, stem:[Phi(i)], should capture the stored potential energy in the system after stem:[i] operations, particularly accounting for operations that are powers of 2. We define stem:[Phi(i)] as:
+
+stem:[Phi(i) = 2 times text("number of completed power of 2 operations up to i")]
+
+The amortized cost, stem:[hat{c_i}], of the stem:[i]-th operation is calculated as:
+
+stem:[hat{c_i} = c_i + Phi(i) - Phi(i-1)]
+
+Where:
+- stem:[c_i] is the actual cost of the stem:[i]-th operation.
+- stem:[Phi(i)] and stem:[Phi(i-1)] represent the potential after and before the stem:[i]-th operation, respectively.
+
+. *Case 1: stem:[i] is a power of 2*
++
+--
+For stem:[i = 2^k]:
+
+- stem:[c_i = i]
+- stem:[Phi(i) - Phi(i-1) = 2 - 0 = 2] (since the count of power of 2 operations increases)
+
+Thus, the amortized cost is:
+
+stem:[hat{c_i} = 2^k + 2]
+--
+
+. *Case 2: stem:[i] is not a power of 2*
++
+--
+Here:
+
+- stem:[c_i = 1]
+- stem:[Phi(i) - Phi(i-1) = 0] (no change in the count of power-of-2 operations)
+
+Thus, the amortized cost is:
+
+stem:[hat{c_i} = 1 + 0 = 1]
+--
+
+Using the defined potential function it results in an overall amortized cost per operation that remains constant, stem:[O(1)].

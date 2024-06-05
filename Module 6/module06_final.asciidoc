@@ -1,0 +1,181 @@
+:stem:
+
+= Problem Set 6
+Author: Giuseppe Schintu <gschintu@vols.utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Suppose that you wish to find, among all minimum cuts in a flow network stem:[G]
+with integer capacities, one that contains the smallest number of edges. Show
+how to modify the capacities of stem:[G] to create a new flow network stem:[G']
+in which any minimum cut in stem:[G'] is a minimum cut with the smallest number
+of edges in stem:[G].
+
+=== Problem 2
+This problem has multiple parts.
+
+==== Setup 1
+Let stem:[G = (V, E)] be a flow network with source stem:[s], sink stem:[t], and
+an integer capacity stem:[c(u, v)] on each edge stem:[(u, v) in E]. Let
+stem:[C = text(max){c(u, v) : (u, v) in E}].
+
+==== Problem Part A
+Argue that a minimum cut of stem:[G] has capacity at most stem:[C |E|].
+
+==== Problem Part B
+For a given number stem:[K], show how to find an augmenting path of capacity at
+least stem:[K] in stem:[O(E)] time, if such a path exists.
+
+==== Setup 2
+The following procedure stem:[text(MAX-FLOW-BY-SCALING)] is a modified version
+of stem:[text(FORD-FULKERSON-METHOD)] to compute a maximum flow in stem:[G].
+
+* stem:[text(MAX-FLOW-BY-SCALING)(G, s, t)]
+  . stem:[C = text(max){c(u, v) : (u, v) in E}]
+  . initialize flow stem:[f] to 0
+  . stem:[K = 2^{|__ log C __|}]
+  . *while* stem:[K >= 1]
+  . stem:[text( )] *while* there exists an augmenting path stem:[p] of capacity
+  at least stem:[K]
+  . stem:[text( ) text( )] augment flow stem:[f] along stem:[p]
+  . stem:[text( ) K = K // 2]
+  . *return* stem:[f]
+
+==== Problem Part C
+Argue that stem:[text(MAX-FLOW-BY-SCALING)] returns a maximum flow.
+
+==== Problem Part D
+Show that the capacity of a minimum cut of the residual network stem:[G_f] is
+less than stem:[2K |E|] each time line 4 executes.
+
+==== Problem Part E
+Argue that the inner *while* loop of lines 5-6 executes stem:[O(E)] times for
+each value of stem:[K].
+
+==== Problem Part F
+Conclude that stem:[text(MAX-FLOW-BY-SCALING)] can be implemented so that it
+runs in stem:[O(E^2 log C)] time.
+
+=== Problem 3
+This problem has multiple parts.
+
+==== Setup
+Let stem:[G = (V, E)] be a flow network with source stem:[s], sink stem:[t], and
+integer capacities. Suppose that you are given a maximum flow in stem:[G].
+
+==== Problem Part A
+Suppose that the capacity of a single edge stem:[(u, v) in E] increases by 1.
+Give an stem:[O(V + E)]-time algorithm to update the maximum flow.
+
+==== Problem Part B
+Suppose that the capacity of a single edge stem:[(u, v) in E] decreases by 1.
+Give an stem:[O(V + E)]-time algorithm to update the maximum flow.
+
+
+== Answers
+
+=== Answer 1
+Suppose that you wish to find, among all minimum cuts in a flow network stem:[G]
+with integer capacities, one that contains the smallest number of edges. Show
+how to modify the capacities of stem:[G] to create a new flow network stem:[G']
+in which any minimum cut in stem:[G'] is a minimum cut with the smallest number
+of edges in stem:[G].
+
+
+- Let stem:[G = (V, E)] be the original graph with vertices stem:[V] and edges stem:[E].
+- Let stem:[c_e] be the capacity of edge stem:[e] in graph stem:[G].
+- Let stem:[G' = (V, E')] be the transformed graph with the same set of vertices stem:[V] and edges stem:[E'] where each edge stem:[e' in E'] corresponds to an edge stem:[e in E] in stem:[G].
+- Let stem:[c'_e] be the capacity of edge stem:[e'] in graph stem:[G'], defined as stem:[c'_e = n * c_e + 1], where stem:[n] is the number of vertices in stem:[G].
+
+We consider a cut in stem:[G'] as stem:[(S, T)] where stem:[S] and stem:[T] are subsets of stem:[V] such that stem:[S cup T = V] and stem:[S cap T = emptyset], and the cut-set is defined as the set of edges from stem:[S] to stem:[T].
+
+==== First, find the value of a Cut in stem:[G']
+
+The value of a cut stem:[(S, T)] in stem:[G'] is given by:
+
+stem:[C'_{(S,T)} = sum_{e' in (S,T)} c'_e = n * sum_{e in (S,T)} c_e + |(S, T)|]
+
+==== Now we can find an equivalent Minimum Cut in stem:[G'] to a Minimum Cut in stem:[G]
+
+Let the value of a minimum cut in stem:[G'] be stem:[C'_{min}], and let stem:[C_{min}] be the value of a corresponding minimum cut in stem:[G].
+
+If there were a cut in stem:[G] with a value stem:[C_y < C_{min}], its corresponding cut in stem:[G'] would have a value:
+
+stem:[n cdot C_y + b <= n * (C_y + 1) < n * C_{min} + a = C'_{min}]
+
+where stem:[b] and stem:[a] represent the number of edges in the respective cuts of stem:[G] and stem:[G']. This leads to a contradiction since we assumed that stem:[C'_{min}] is the value of a minimum cut in stem:[G'], implying that no cut in stem:[G] can have a value smaller than stem:[C_{min}].
+
+Therefore, every minimum cut in stem:[G'] corresponds to a minimum cut in stem:[G]. Moreover, because the transformation adds 1 for every edge in the cut, a minimum cut in stem:[G'] also minimizes the number of edges among all minimum cuts in stem:[G], thus achieving the goal of finding a minimum cut in stem:[G] with the smallest number of edges.
+
+
+
+==== Answer Part A
+
+In this particular case, given stem:[C = text(max){c(u, v) : (u, v) in E}], the maximum capacity of any edge can be at most stem:[C]. Since a cut could potentially contain all edges, the maximum possible capacity for a cut is that all edges cross from stem:[s] to stem:[t] each with a capacity of stem:[C]. Therefore, the capacity of a minimum cut of stem:[G] has a capacity at most stem:[C |E|], because this is the maximum sum of the capacities for all the edges in the graph.
+
+==== Answer Part B
+
+As suggested in the page 688 of the textbook, a good implementation of the Ford-fulkerson algorithm would be to use depth-first search(DFS) or breadth-first search(BFS) to efficiently find shorthest augmenting paths. In this case, we can use the BFS algorithm to find the shortest augmenting path in stem:[O(E)] time.
+
+We start from stem:[s] and use a modified implementation of BFS so that we consider only edges stem:[(u, v)] where stem:[c_f(u, v) >= K]. If the BFS reaches stem:[t], we have found an augmenting path of capacity at least stem:[K]. If the BFS does not reach stem:[t], then no such path exists.
+
+Because the search visits each vertex and edges into consideration at most once, the time complexity is stem:[O(V + E)]. However, since stem:[V] is less than or equal to stem:[E + 1] in a connected graph, we can simplify this to stem:[O(E)].
+
+==== Answer Part C
+
+Let stem:[C] be the maximum capacity of any edge in the graph.
+
+The invariant stem:[K] is the largest power of 2 that is less than or equal to stem:[C], the maximum capacity of any edge in the graph.
+
+The MAX-FLOW-BY-SCALING algorithm begins with stem:[K] set to a power of stem:[2]. In each iteration of a specific loop, stem:[K] is halved until it drops below stem:[1]. There's a point where stem:[K = 1]. At this stage, the algorithm looks for paths through the network that can carry at least stem:[1] more unit of flow - these are called augmenting paths.
+
+Because all the original capacities in the network are whole numbers, any extra flow we add along these paths is also a whole number. This means the smallest amount of flow we can add or find in an augmenting path is stem:[1].
+
+When the algorithm finishes, it means we can't find any more of these augmenting paths with at least stem:[1] unit of capacity available. In simple terms, if the algorithm can't find a way to push at least one more unit of flow from start to finish, it stops. This indicates we've used up all possible paths to increase the flow, given the capacities are integers.
+
+
+==== Answer Part D
+
+Every time line 4 of the algorithm is executed, it indicates that there are no augmenting paths with a capacity of at least stem:[2K]. Initially, when line 4 is executed for the first time, we observe that:
+
+stem:[2K = 2 * 2^{floor(lg(C))} > 2 * 2^{(lg(C) - 1)} = 2^{(lg(C))} = C].
+
+This inequality demonstrates that stem:[2K] initially exceeds stem:[C], the maximum capacity of any edge in the network. Since an augmenting path's capacity is constrained by its smallest-edge capacity, and all edges have a capacity of at most stem:[C], no augmenting path can have a capacity greater than stem:[C]. In subsequent executions of line 4, the loop on line 5 will have utilized all the high-capacity augmenting paths, terminating only when no significant paths remain.
+
+For any augmenting path with a capacity less than stem:[2K], we can select an edge stem:[e_p] along this path that has the smallest capacity. Removing all such edges stem:[e_p] from the residual network would effectively prevent any augmenting path from existing, as every possible augmenting path would have passed through one of these edges. Given that these edges are a subset of all edges in the network, their total number does not exceed the total edge count stem:[|E|]. Moreover, each of these edges has a capacity of at most stem:[2K]. Therefore, the total capacity of this "cut" in the network is at most stem:[2K cdot |E|].
+
+
+==== Answer Part E
+
+Every time the inner `while` loop is executed, it adds a flow amount that is at least stem:[K], corresponding to the capacity of the augmenting path utilized. Before this loop starts, there exists a cut whose cost is at most stem:[2K * |E|], setting a limit on the maximum flow that can be added, which is stem:[2K * |E|].
+
+Given this setup, the maximum number of iterations (cuts) possible is determined by dividing the total potential added flow (stem:[2K * |E|]) by the minimum amount added per iteration (stem:[K]), 
+
+stem:[frac{2K * |E|}{K} = 2 * |E|]
+
+This aligns with the upper bound of stem:[|E|], stem:[O(|E|)].
+
+
+==== Answer Part F
+
+In the MAX-FLOW-BY-SCALING algorithm, we only execute the outermost loop `for loop` stem:[lg C] many times since stem:[lg(2^{floor(lg(C))}) leq lg(C)]. The inner loop is executed at most stem:[O(E)] times for each value of stem:[K]. Ultimately, every time the inner for loop runs, the operation it performs can be done in time stem:[O(E)], just like question 2B. Therefore, the total time complexity of the algorithm is stem:[O(E^2 log C)].
+
+
+=== Answer 3A
+
+If a minimum cut in the network does not include the edge stem:[(u, v)], then the maximum flow through the network cannot be increased by augmenting the capacity of this edge, as there will exist no augmenting path in the residual network that includes this edge. Additionally, if stem:[(u, v)] crosses a minimum cut, there's a potential to increase the flow by stem:[1]. To achieve this, we can perform a single iteration of the Ford-Fulkerson method:
+
+. *Identify Augmenting Path*: Apply Lemma 24.2 and Breadth-First Search (BFS) to find an augmenting path that includes the edge stem:[(u, v)] whose capacity was increased. This search is conducted in the residual network and runs in stem:[O(V + E)] time, where stem:[V] and stem:[E] are the numbers of vertices and edges in the network, respectively.
+
+. *Update the Flow*: If an augmenting path is discovered, it indicates that the flow can indeed be increased. The Ford-Fulkerson algorithm, when applied for this iteration, will increment the flow along this path by stem:[1]. This increase is guaranteed since the capacities are integers, ensuring that all flow values remain integral.
+
+. *Maximality of the New Flow*: Given the integrality of the edge capacities(as stated in the Setup) and flow values, a single iteration of the Ford-Fulkerson algorithm's while-loop (specifically, the part that searches for an augmenting path and updates the flow) suffices to augment the flow by stem:[1]. This augmentation reflects the maximum possible increase under the given conditions.
+
+
+=== Answer 3B
+
+If a minimum cut in the network does not include the edge stem:[(u, v)], then the maximum flow through the network cannot be decreased by reducing the capacity of this edge, as there will exist no augmenting path in the residual network that includes this edge. However, if stem:[(u, v)] crosses a minimum cut, there's a potential to decrease the flow by stem:[1]. To achieve this, we can perform a single iteration of the Ford-Fulkerson method:
+
+Using the same argument as in Part A, given the integrality of the edge capacities and flow values, a single iteration of the Ford-Fulkerson algorithm's while-loop suffices to decrease the flow by stem:[1]. This decrease is guaranteed since the capacities are integers, ensuring that all flow values remain integral. Thus, either there is an augmenting path that includes the edge stem:[(u, v)], in which case the flow can be decreased by stem:[1], or there is no such path, in which case the flow remains unchanged. This single iteration of the Ford-Fulkerson algorithm achieves the desired decrease in the maximum flow.

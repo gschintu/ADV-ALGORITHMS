@@ -1,0 +1,37 @@
+:stem:
+
+= Practice 7-1
+Author: Giuseppe Schintu
+:toc:
+
+== Problems
+
+=== Problem 1
+Use aggregate analysis to determine the amortized cost per operation for a
+sequence of stem:[n] operations on a data structure in which the stem:[i]th
+operation costs stem:[i] if stem:[i] is an exact power of 2, and 1 otherwise.
+
+
+== Answers
+
+=== Answer 1
+
+If we can let stem:[c_i] be the cost of the stem:[i^{th}] operation, then we have 2 conditions:
+
+* stem:[c_i = i] if stem:[i] is a power of 2
+* stem:[c_i = 1] otherwise
+
+If the stem:[sum_{i=1}^{n} c_i] is the total cost of the stem:[n] operations, then we can say that the total cost is less than or equal to the sum of the costs of the stem:[n] operations. This can be expressed as:
+
+stem:[c_i <= n + sum_{j=0}^{log n} 2^j]
+
+if we solve for the sum of the costs of the stem:[n] operations, we get:
+
+stem:[n + sum_{j=0}^{log n} 2^j = n + (2n - 1)]
+
+stem:[n + (2n - 1) = 3n - 1]
+
+stem:[n + (2n - 1) < 3n]
+
+
+Now, if we divide the total cost by the number of operations, we get stem:[3n / n = 3]. Therefore, the amortized cost per operation is stem:[3], or stem:[O(1)] because the cost is constant.

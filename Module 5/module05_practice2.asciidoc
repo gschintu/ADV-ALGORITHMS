@@ -1,0 +1,15 @@
+:stem:
+
+= Practice 5-2
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problems
+
+=== Problem 1
+Prove that the fractional knapsack problem has the greedy-choice property.
+
+
+== Answers
+
+=== Answer 1

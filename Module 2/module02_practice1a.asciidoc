@@ -1,0 +1,43 @@
+:stem:
+
+= Practice 2-1
+Author: Adam Disney <adisney1@utk.edu>
+:toc:
+
+== Problem 1
+You can also think of insertion sort as a recursive algorithm. In order to sort
+stem:[A[1:n\]], recursively sort the subarray stem:[A[1:n-1\]] and then insert
+stem:[A[n\]] into the sorted subarray stem:[A[1:n-1\]]. Write pseudocode for this
+recursive version of insertion sort. Give a recurrence for its worst-case running
+time.
+
+=== Notes
+Here is an example of writing pseudocode with asciidoc. Use "text" or other text
+tags that you can find in the asciidoc documentation to make sure text stays as
+text in a stem block. It also helps with forcing spacing and indention.
+Otherwise, asciidoc generally ignores exact whitespace.
+
+* stem:[text(MERGE-SORT)(A, p, r)]
+. stem:[text(if ) p >= r]
+. stem:[text(  return)]
+. stem:[q = |__ (p + r) // 2 __|]
+. stem:[text(MERGE-SORT)(A, p, q)]
+. stem:[text(MERGE-SORT)(A, q+1, r)]
+. stem:[text(MERGE)(A, p, q, r)]
+
+
+== Problem 1 Answer
+* stem:[text(INSERTION-SORT) (A, n)]
+. stem:[text(if ) n = 1]
+. stem:[text(  return)]
+. stem:[text(INSERTION-SORT)(A, n-1)]
+. stem:[text(key) = A[n\]]
+. stem:[j = n - 1]
+. stem:[text(while ) j > 0 text( and ) A[j\] > text(key)]
+. stem:[text(  ) A[j + 1\] = A[j\]]
+. stem:[text(  ) j = j - 1]
+. stem:[A[j + 1\] = text(key)]
+
+* stem:[T(n) = {
+(Theta(1), text(if ) n = 1),
+(T(n-1) + Theta(n), text(if ) n > 1):}]
